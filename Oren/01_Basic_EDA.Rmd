@@ -16,6 +16,8 @@ library(data.table)
 library(readr)
 library(matrixStats)
 library(psych)
+library(reticulate)
+library(dlookr)
 ```
 
 
@@ -27,9 +29,21 @@ df <- df %>%
 
 ```
 
+
+
+
 ```{r}
 summary(df)
-psych::describe(df[-c(1,2)])
+df_summary <- psych::describe(df[-c(1,2)])
 # by(df[-c(1,2)], df$MSZoning, describe)
 ```
+
+
+```{r}
+df %>% filter(.data > 0) %>%
+  normality() %>%
+  filter(p_value <= 0.01) %>% 
+  arrange(abs(p_value))
+```
+
 
