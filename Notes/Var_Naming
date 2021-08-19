@@ -1,0 +1,15 @@
+Variable Naming Convention
+
+Keep all variable names the same.
+
+Any variable that is modified should be made into a new column. The name of the variable column should be "Variable_MOD", where MOD describes the modification. 
+EXAMPLE: 
+Converting "KitchenQual" from a categorical to ordinal will become "KitchenQual_Ord". Then, you can add the new variable to our data dictionary.
+KitchenQual -> KitchenQual_Ord
+
+For any variable that you recommend be removed from the analysis, rename the variable "_Variable". 
+EXAMPLE: 
+To delete "MiscFeature", it will become "_MiscFeature".
+MiscFeature -> _MiscFeature
+
+Values for variables can be changed for nominal categorical to clarify the meaning.
