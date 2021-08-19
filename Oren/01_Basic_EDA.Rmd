@@ -1,0 +1,49 @@
+---
+title: "01_Basic_EDA"
+author: "Oren"
+date: "8/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r libraries}
+library(tidyverse)
+library(data.table)
+library(readr)
+library(matrixStats)
+library(psych)
+library(reticulate)
+library(dlookr)
+```
+
+
+
+```{r}
+df <- readr::read_csv("../Ames_Housing_Price_Data_raw.csv")
+df <- df %>%
+  dplyr::mutate_if(sapply(df, is.character), as.factor)
+
+```
+
+
+
+
+```{r}
+summary(df)
+df_summary <- psych::describe(df[-c(1,2)])
+# by(df[-c(1,2)], df$MSZoning, describe)
+```
+
+
+```{r}
+df %>% filter(.data > 0) %>%
+  normality() %>%
+  filter(p_value <= 0.01) %>% 
+  arrange(abs(p_value))
+```
+
+

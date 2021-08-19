@@ -44,6 +44,9 @@ MS Zoning (Nominal): Identifies the general zoning classification of the sale.
        RL	Residential Low Density
        RP	Residential Low Density Park 
        RM	Residential Medium Density
+
+#Added by Matt# From the City of Ames zoning law, Floating Village Residential is basically a mixed residential/shopping/business zone with residential buildings organized 
+around a central plaza/square, designed to promote pedestrian mobility and a sense of neighborhood community
 	
 Lot Frontage (Continuous): Linear feet of street connected to property
 
@@ -146,7 +149,7 @@ Condition 2 (Nominal): Proximity to various conditions (if more than one is pres
        RRNn	Within 200' of North-South Railroad
        RRAn	Adjacent to North-South Railroad
        PosN	Near positive off-site feature--park, greenbelt, etc.
-       PosA	Adjacent to postive off-site feature
+       PosA	Adjacent to positive off-site feature
        RRNe	Within 200' of East-West Railroad
        RRAe	Adjacent to East-West Railroad
 	
