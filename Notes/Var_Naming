@@ -7,9 +7,10 @@ EXAMPLE:
 Converting "KitchenQual" from a categorical to ordinal will become "KitchenQual_Ord". Then, you can add the new variable to our data dictionary.
 KitchenQual -> KitchenQual_Ord
 
-For any variable that you recommend be removed from the analysis, rename the variable "_Variable". 
+For a variable that you think might be removed from the analysis, rename the variable "maybe_Variable".
+For any variable that you recommend definitely be removed from the analysis, rename the variable "drop_Variable".
 EXAMPLE: 
-To delete "MiscFeature", it will become "_MiscFeature".
-MiscFeature -> _MiscFeature
+To mark "MiscFeature" for deletion, it will become "drop_MiscFeature".
+MiscFeature -> drop_MiscFeature
 
 Values for variables can be changed for nominal categorical to clarify the meaning.
