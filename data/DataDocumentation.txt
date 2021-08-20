@@ -32,7 +32,7 @@ MS SubClass (Nominal): Identifies the type of dwelling involved in the sale.
        150	1-1/2 STORY PUD - ALL AGES
        160	2-STORY PUD - 1946 & NEWER
        180	PUD - MULTILEVEL - INCL SPLIT LEV/FOYER
-       190	2 FAMILY CONVERSION - ALL STYLES AND AGES
+       190	2 FAMILY CONVERSIOf2N - ALL STYLES AND AGES
 
 MS Zoning (Nominal): Identifies the general zoning classification of the sale.
 		
