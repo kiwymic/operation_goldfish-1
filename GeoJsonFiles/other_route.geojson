@@ -1,0 +1,590 @@
+{
+ "currentVersion": 10.8,
+ "cimVersion": "2.5.0",
+ "id": 34,
+ "name": "Other Routes",
+ "type": "Feature Layer",
+ "description": "",
+ "geometryType": "esriGeometryPolyline",
+ "sourceSpatialReference": {
+  "wkid": 102675,
+  "latestWkid": 3417,
+  "xyTolerance": 6.099045285162114E-4,
+  "zTolerance": 2.0E-5,
+  "mTolerance": 2.0E-5,
+  "falseX": -1.1541899999997112E8,
+  "falseY": -9.389759999971673E7,
+  "xyUnits": 13116.807018079648,
+  "falseZ": 0,
+  "zUnits": 1,
+  "falseM": 0,
+  "mUnits": 1
+ },
+ "copyrightText": "",
+ "parentLayer": null,
+ "subLayers": [],
+ "minScale": 0,
+ "maxScale": 0,
+ "referenceScale": 0.0,
+ "drawingInfo": {
+  "renderer": {
+   "type": "uniqueValue",
+   "field1": "Route",
+   "uniqueValueInfos": [
+    {
+     "symbol": {
+      "type": "esriSLS",
+      "style": "esriSLSSolid",
+      "color": [
+       38,
+       115,
+       0,
+       255
+      ],
+      "width": 3
+     },
+     "value": "4",
+     "label": "County Route"
+    },
+    {
+     "symbol": {
+      "type": "esriSLS",
+      "style": "esriSLSSolid",
+      "color": [
+       156,
+       156,
+       156,
+       255
+      ],
+      "width": 3
+     },
+     "value": "5",
+     "label": "Private/County/State"
+    }
+   ],
+   "fieldDelimiter": ",",
+   "authoringInfo": {
+    "colorRamp": {
+     "type": "multipart",
+     "colorRamps": [
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        166,
+        55,
+        151,
+        255
+       ],
+       "toColor": [
+        166,
+        55,
+        151,
+        255
+       ]
+      },
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        61,
+        184,
+        69,
+        255
+       ],
+       "toColor": [
+        61,
+        184,
+        69,
+        255
+       ]
+      },
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        201,
+        111,
+        42,
+        255
+       ],
+       "toColor": [
+        201,
+        111,
+        42,
+        255
+       ]
+      },
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        73,
+        171,
+        201,
+        255
+       ],
+       "toColor": [
+        73,
+        171,
+        201,
+        255
+       ]
+      },
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        43,
+        66,
+        196,
+        255
+       ],
+       "toColor": [
+        43,
+        66,
+        196,
+        255
+       ]
+      },
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        199,
+        191,
+        46,
+        255
+       ],
+       "toColor": [
+        199,
+        191,
+        46,
+        255
+       ]
+      },
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        179,
+        70,
+        88,
+        255
+       ],
+       "toColor": [
+        179,
+        70,
+        88,
+        255
+       ]
+      },
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        46,
+        201,
+        165,
+        255
+       ],
+       "toColor": [
+        46,
+        201,
+        165,
+        255
+       ]
+      },
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        43,
+        90,
+        161,
+        255
+       ],
+       "toColor": [
+        43,
+        90,
+        161,
+        255
+       ]
+      },
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        157,
+        62,
+        201,
+        255
+       ],
+       "toColor": [
+        157,
+        62,
+        201,
+        255
+       ]
+      },
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        156,
+        51,
+        39,
+        255
+       ],
+       "toColor": [
+        156,
+        51,
+        39,
+        255
+       ]
+      },
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        129,
+        156,
+        48,
+        255
+       ],
+       "toColor": [
+        129,
+        156,
+        48,
+        255
+       ]
+      },
+      {
+       "type": "algorithmic",
+       "algorithm": "esriCIELabAlgorithm",
+       "fromColor": [
+        163,
+        127,
+        49,
+        255
+       ],
+       "toColor": [
+        163,
+        127,
+        49,
+        255
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "scaleSymbols": true,
+  "transparency": 0,
+  "labelingInfo": null
+ },
+ "defaultVisibility": false,
+ "extent": {
+  "xmin": 4864604.887507573,
+  "ymin": 3455510.640387222,
+  "xmax": 4915425.769989207,
+  "ymax": 3492004.730705112,
+  "spatialReference": {
+   "wkid": 102675,
+   "latestWkid": 3417,
+   "xyTolerance": 0.003280833333333333,
+   "zTolerance": 0.001,
+   "mTolerance": 0.001,
+   "falseX": -1.2745302500000001E8,
+   "falseY": -1.0593162500000001E8,
+   "xyUnits": 3.402171326241821E7,
+   "falseZ": -100000,
+   "zUnits": 10000,
+   "falseM": -100000,
+   "mUnits": 10000
+  }
+ },
+ "hasAttachments": false,
+ "htmlPopupType": "esriServerHTMLPopupTypeAsHTMLText",
+ "displayField": "Route_Verified",
+ "typeIdField": "Route",
+ "subtypeFieldName": "Route",
+ "subtypeField": "Route",
+ "defaultSubtypeCode": 0,
+ "fields": [
+  {
+   "name": "OBJECTID",
+   "type": "esriFieldTypeOID",
+   "alias": "OBJECTID",
+   "domain": null
+  },
+  {
+   "name": "Route",
+   "type": "esriFieldTypeSmallInteger",
+   "alias": "Route",
+   "domain": null
+  },
+  {
+   "name": "Route_Verified",
+   "type": "esriFieldTypeString",
+   "alias": "Route Verified",
+   "length": 10,
+   "domain": null
+  },
+  {
+   "name": "RtNumber",
+   "type": "esriFieldTypeString",
+   "alias": "Route Number",
+   "length": 25,
+   "domain": {
+    "type": "codedValue",
+    "name": "WS3_coa_SnRtNumber",
+    "description": "",
+    "codedValues": [
+     {
+      "name": "1",
+      "code": "1"
+     },
+     {
+      "name": "2",
+      "code": "2"
+     },
+     {
+      "name": "3",
+      "code": "3"
+     },
+     {
+      "name": "4",
+      "code": "4"
+     },
+     {
+      "name": "5",
+      "code": "5"
+     },
+     {
+      "name": "6",
+      "code": "6"
+     },
+     {
+      "name": "7",
+      "code": "7"
+     },
+     {
+      "name": "8",
+      "code": "8"
+     }
+    ],
+    "mergePolicy": "esriMPTDefaultValue",
+    "splitPolicy": "esriSPTDefaultValue"
+   }
+  },
+  {
+   "name": "RtPriority",
+   "type": "esriFieldTypeString",
+   "alias": "Route Priority",
+   "length": 50,
+   "domain": {
+    "type": "codedValue",
+    "name": "WS3_coa_SnRtPriority",
+    "description": "",
+    "codedValues": [
+     {
+      "name": "Primary",
+      "code": "Primary"
+     },
+     {
+      "name": "Secondary",
+      "code": "Secondary"
+     }
+    ],
+    "mergePolicy": "esriMPTDefaultValue",
+    "splitPolicy": "esriSPTDefaultValue"
+   }
+  },
+  {
+   "name": "Shape",
+   "type": "esriFieldTypeGeometry",
+   "alias": "Shape",
+   "domain": null
+  },
+  {
+   "name": "Shape.STLength()",
+   "type": "esriFieldTypeDouble",
+   "alias": "Shape.STLength()",
+   "domain": null
+  }
+ ],
+ "geometryField": {
+  "name": "Shape",
+  "type": "esriFieldTypeGeometry",
+  "alias": "Shape"
+ },
+ "indexes": [
+  {
+   "name": "R1123_pk",
+   "fields": "OBJECTID",
+   "isAscending": true,
+   "isUnique": true,
+   "description": ""
+  },
+  {
+   "name": "S894_idx",
+   "fields": "Shape",
+   "isAscending": true,
+   "isUnique": true,
+   "description": ""
+  }
+ ],
+ "types": [
+  {
+   "domains": {},
+   "id": 0,
+   "name": "Red Route"
+  },
+  {
+   "domains": {},
+   "id": 1,
+   "name": "Blue Route"
+  },
+  {
+   "domains": {},
+   "id": 2,
+   "name": "North Grader"
+  },
+  {
+   "domains": {},
+   "id": 3,
+   "name": "South Grader"
+  },
+  {
+   "domains": {},
+   "id": 4,
+   "name": "County Route"
+  },
+  {
+   "domains": {},
+   "id": 5,
+   "name": "Private/County/State"
+  },
+  {
+   "domains": {},
+   "id": 6,
+   "name": "Route Boundaries"
+  }
+ ],
+ "subtypes": [
+  {
+   "domains": {},
+   "defaultValues": {
+    "Route": null,
+    "Route_Verified": null,
+    "RtNumber": null,
+    "RtPriority": null
+   },
+   "code": 0,
+   "name": "Red Route"
+  },
+  {
+   "domains": {},
+   "defaultValues": {
+    "Route": null,
+    "Route_Verified": null,
+    "RtNumber": null,
+    "RtPriority": null
+   },
+   "code": 1,
+   "name": "Blue Route"
+  },
+  {
+   "domains": {},
+   "defaultValues": {
+    "Route": null,
+    "Route_Verified": null,
+    "RtNumber": null,
+    "RtPriority": null
+   },
+   "code": 2,
+   "name": "North Grader"
+  },
+  {
+   "domains": {},
+   "defaultValues": {
+    "Route": null,
+    "Route_Verified": null,
+    "RtNumber": null,
+    "RtPriority": null
+   },
+   "code": 3,
+   "name": "South Grader"
+  },
+  {
+   "domains": {},
+   "defaultValues": {
+    "Route": null,
+    "Route_Verified": null,
+    "RtNumber": null,
+    "RtPriority": null
+   },
+   "code": 4,
+   "name": "County Route"
+  },
+  {
+   "domains": {},
+   "defaultValues": {
+    "Route": null,
+    "Route_Verified": null,
+    "RtNumber": null,
+    "RtPriority": null
+   },
+   "code": 5,
+   "name": "Private/County/State"
+  },
+  {
+   "domains": {},
+   "defaultValues": {
+    "Route": null,
+    "Route_Verified": null,
+    "RtNumber": null,
+    "RtPriority": null
+   },
+   "code": 6,
+   "name": "Route Boundaries"
+  }
+ ],
+ "relationships": [],
+ "canModifyLayer": true,
+ "canScaleSymbols": false,
+ "hasLabels": false,
+ "capabilities": "Map,Query,Data",
+ "maxRecordCount": 10000,
+ "supportsStatistics": true,
+ "supportsAdvancedQueries": true,
+ "supportedQueryFormats": "JSON, geoJSON, PBF",
+ "isDataVersioned": false,
+ "ownershipBasedAccessControlForFeatures": {"allowOthersToQuery": true},
+ "useStandardizedQueries": true,
+ "advancedQueryCapabilities": {
+  "useStandardizedQueries": true,
+  "supportsStatistics": true,
+  "supportsHavingClause": true,
+  "supportsOrderBy": true,
+  "supportsDistinct": true,
+  "supportsCountDistinct": true,
+  "supportsPagination": true,
+  "supportsTrueCurve": true,
+  "supportsQueryWithDatumTransformation": true,
+  "supportsReturningQueryExtent": true,
+  "supportsQueryWithDistance": true,
+  "supportsSqlExpression": true
+ },
+ "supportsDatumTransformation": true,
+ "dateFieldsTimeReference": null,
+ "hasMetadata": true,
+ "isDataArchived": false,
+ "archivingInfo": {
+  "supportsQueryWithHistoricMoment": false,
+  "startArchivingMoment": -1
+ },
+ "supportsCoordinatesQuantization": true,
+ "supportsDynamicLegends": true
+}

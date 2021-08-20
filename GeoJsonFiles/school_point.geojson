@@ -1,0 +1,15 @@
+{
+"type": "FeatureCollection",
+"name": "sql_statement",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "amenity": "school", "name": "Ames High School", "ele": null, "addr:housenumber": "1921", "addr:street": "Ames High Dive", "operator": null, "website": null, "old_name": null }, "geometry": { "type": "Point", "coordinates": [ -93.634264, 42.0403449 ] } },
+{ "type": "Feature", "properties": { "amenity": "school", "name": "Ames Middle School", "ele": "298", "addr:housenumber": null, "addr:street": null, "operator": null, "website": null, "old_name": null }, "geometry": { "type": "Point", "coordinates": [ -93.6710567, 42.0132098 ] } },
+{ "type": "Feature", "properties": { "amenity": "school", "name": "Beardshear School", "ele": "283", "addr:housenumber": null, "addr:street": null, "operator": null, "website": null, "old_name": null }, "geometry": { "type": "Point", "coordinates": [ -93.6084776, 42.0307042 ] } },
+{ "type": "Feature", "properties": { "amenity": "school", "name": "Camp Sawyer Elementary School", "ele": "308", "addr:housenumber": "3622", "addr:street": "Woodland Street", "operator": "Ames Community School District", "website": "http:\/\/www.ames.k12.ia.us\/schools\/sawyer-elementary-school\/", "old_name": "Edwards School" }, "geometry": { "type": "Point", "coordinates": [ -93.6685531, 42.0258189 ] } },
+{ "type": "Feature", "properties": { "amenity": "school", "name": "Edwards Elementary School", "ele": null, "addr:housenumber": "820", "addr:street": "Miller Avenue", "operator": "Ames Community School District", "website": "http:\/\/www.ames.k12.ia.us\/schools\/edwards-elementary\/", "old_name": null }, "geometry": { "type": "Point", "coordinates": [ -93.6856328, 42.015945 ] } },
+{ "type": "Feature", "properties": { "amenity": "school", "name": "Fellows Elementary School", "ele": "290", "addr:housenumber": null, "addr:street": null, "operator": null, "website": null, "old_name": null }, "geometry": { "type": "Point", "coordinates": [ -93.6282738, 42.0430413 ] } },
+{ "type": "Feature", "properties": { "amenity": "school", "name": "Northwood School", "ele": "293", "addr:housenumber": null, "addr:street": null, "operator": null, "website": null, "old_name": null }, "geometry": { "type": "Point", "coordinates": [ -93.6185511, 42.0502635 ] } },
+{ "type": "Feature", "properties": { "amenity": "school", "name": "Whittier School", "ele": "276", "addr:housenumber": null, "addr:street": null, "operator": null, "website": null, "old_name": null }, "geometry": { "type": "Point", "coordinates": [ -93.6263294, 42.0219305 ] } }
+]
+}

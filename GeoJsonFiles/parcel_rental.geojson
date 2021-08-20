@@ -1,0 +1,629 @@
+{
+ "currentVersion": 10.8,
+ "cimVersion": "2.5.0",
+ "id": 157,
+ "name": "Parcels Rentals",
+ "type": "Feature Layer",
+ "description": "",
+ "geometryType": "esriGeometryPolygon",
+ "sourceSpatialReference": {
+  "wkid": 102675,
+  "latestWkid": 3417,
+  "xyTolerance": 0.003280833333333333,
+  "zTolerance": 0.001,
+  "mTolerance": 0.001,
+  "falseX": -115419000,
+  "falseY": -93897600,
+  "xyUnits": 3048.0060960121928,
+  "falseZ": -100000,
+  "zUnits": 10000,
+  "falseM": -100000,
+  "mUnits": 10000
+ },
+ "copyrightText": "",
+ "parentLayer": null,
+ "subLayers": [],
+ "minScale": 0,
+ "maxScale": 0,
+ "referenceScale": 0.0,
+ "drawingInfo": {
+  "renderer": {
+   "type": "simple",
+   "symbol": {
+    "type": "esriSFS",
+    "style": "esriSFSSolid",
+    "color": [
+     255,
+     211,
+     127,
+     255
+    ],
+    "outline": {
+     "type": "esriSLS",
+     "style": "esriSLSSolid",
+     "color": [
+      110,
+      110,
+      110,
+      255
+     ],
+     "width": 0.4
+    }
+   }
+  },
+  "scaleSymbols": true,
+  "transparency": 0,
+  "labelingInfo": null
+ },
+ "defaultVisibility": false,
+ "extent": {
+  "xmin": 4868742.000150308,
+  "ymin": 3457968.069314316,
+  "xmax": 4900516.490078881,
+  "ymax": 3485984.1701061428,
+  "spatialReference": {
+   "wkid": 102675,
+   "latestWkid": 3417,
+   "xyTolerance": 0.003280833333333333,
+   "zTolerance": 0.001,
+   "mTolerance": 0.001,
+   "falseX": -1.2745302500000001E8,
+   "falseY": -1.0593162500000001E8,
+   "xyUnits": 3.402171326241821E7,
+   "falseZ": -100000,
+   "zUnits": 10000,
+   "falseM": -100000,
+   "mUnits": 10000
+  }
+ },
+ "hasAttachments": false,
+ "htmlPopupType": "esriServerHTMLPopupTypeAsHTMLText",
+ "displayField": "OW_NAME",
+ "typeIdField": null,
+ "subtypeFieldName": null,
+ "subtypeField": null,
+ "defaultSubtypeCode": null,
+ "fields": [
+  {
+   "name": "OBJECTID",
+   "type": "esriFieldTypeOID",
+   "alias": "OBJECTID",
+   "domain": null
+  },
+  {
+   "name": "IBID",
+   "type": "esriFieldTypeInteger",
+   "alias": "IBID",
+   "domain": null
+  },
+  {
+   "name": "GEOCODE",
+   "type": "esriFieldTypeString",
+   "alias": "GEOCODE",
+   "length": 10,
+   "domain": null
+  },
+  {
+   "name": "PARCELID",
+   "type": "esriFieldTypeString",
+   "alias": "PARCELID",
+   "length": 12,
+   "domain": null
+  },
+  {
+   "name": "Shape",
+   "type": "esriFieldTypeGeometry",
+   "alias": "Shape",
+   "domain": null
+  },
+  {
+   "name": "PMPERMITID",
+   "type": "esriFieldTypeString",
+   "alias": "PMPERMITID",
+   "length": 36,
+   "domain": null
+  },
+  {
+   "name": "PERMIT_NUMBER",
+   "type": "esriFieldTypeString",
+   "alias": "PERMIT_NUMBER",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "APPLICATION_DATE",
+   "type": "esriFieldTypeDate",
+   "alias": "APPLICATION_DATE",
+   "length": 8,
+   "domain": null
+  },
+  {
+   "name": "ISSUE_DATE",
+   "type": "esriFieldTypeDate",
+   "alias": "ISSUE_DATE",
+   "length": 8,
+   "domain": null
+  },
+  {
+   "name": "EXPIRATION_DATE",
+   "type": "esriFieldTypeDate",
+   "alias": "EXPIRATION_DATE",
+   "length": 8,
+   "domain": null
+  },
+  {
+   "name": "FINALED_DATE",
+   "type": "esriFieldTypeDate",
+   "alias": "FINALED_DATE",
+   "length": 8,
+   "domain": null
+  },
+  {
+   "name": "LAST_INSPECTION_DATE",
+   "type": "esriFieldTypeDate",
+   "alias": "LAST_INSPECTION_DATE",
+   "length": 8,
+   "domain": null
+  },
+  {
+   "name": "DESCRIPTION",
+   "type": "esriFieldTypeString",
+   "alias": "DESCRIPTION",
+   "length": 2147483647,
+   "domain": null
+  },
+  {
+   "name": "WORK_CLASS",
+   "type": "esriFieldTypeString",
+   "alias": "WORK_CLASS",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "PERMIT_STATUS",
+   "type": "esriFieldTypeString",
+   "alias": "PERMIT_STATUS",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "MAIN_ADDRESS_LINE1",
+   "type": "esriFieldTypeString",
+   "alias": "MAIN_ADDRESS_LINE1",
+   "length": 736,
+   "domain": null
+  },
+  {
+   "name": "MAIN_ADDRESS_LINE2",
+   "type": "esriFieldTypeString",
+   "alias": "MAIN_ADDRESS_LINE2",
+   "length": 153,
+   "domain": null
+  },
+  {
+   "name": "ADDRESSLINE1",
+   "type": "esriFieldTypeString",
+   "alias": "ADDRESSLINE1",
+   "length": 200,
+   "domain": null
+  },
+  {
+   "name": "ADDRESSLINE2",
+   "type": "esriFieldTypeString",
+   "alias": "ADDRESSLINE2",
+   "length": 200,
+   "domain": null
+  },
+  {
+   "name": "ADDRESSLINE3",
+   "type": "esriFieldTypeString",
+   "alias": "ADDRESSLINE3",
+   "length": 200,
+   "domain": null
+  },
+  {
+   "name": "CITY",
+   "type": "esriFieldTypeString",
+   "alias": "CITY",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "STATE",
+   "type": "esriFieldTypeString",
+   "alias": "STATE",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "POSTDIRECTION",
+   "type": "esriFieldTypeString",
+   "alias": "POSTDIRECTION",
+   "length": 30,
+   "domain": null
+  },
+  {
+   "name": "PREDIRECTION",
+   "type": "esriFieldTypeString",
+   "alias": "PREDIRECTION",
+   "length": 30,
+   "domain": null
+  },
+  {
+   "name": "UNITORSUITE",
+   "type": "esriFieldTypeString",
+   "alias": "UNITORSUITE",
+   "length": 20,
+   "domain": null
+  },
+  {
+   "name": "PARCELNUMBER",
+   "type": "esriFieldTypeString",
+   "alias": "PARCELNUMBER",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "NumberofUnits",
+   "type": "esriFieldTypeDouble",
+   "alias": "NumberofUnits",
+   "domain": null
+  },
+  {
+   "name": "OW_PMPERMITID",
+   "type": "esriFieldTypeString",
+   "alias": "OW_PMPERMITID",
+   "length": 36,
+   "domain": null
+  },
+  {
+   "name": "OW_ISBILLING",
+   "type": "esriFieldTypeSmallInteger",
+   "alias": "OW_ISBILLING",
+   "domain": null
+  },
+  {
+   "name": "OW_CONTACTCONFIRMSTATUSID",
+   "type": "esriFieldTypeInteger",
+   "alias": "OW_CONTACTCONFIRMSTATUSID",
+   "domain": null
+  },
+  {
+   "name": "OW_NAME",
+   "type": "esriFieldTypeString",
+   "alias": "OW_NAME",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "OW_DESCRIPTION",
+   "type": "esriFieldTypeString",
+   "alias": "OW_DESCRIPTION",
+   "length": 2147483647,
+   "domain": null
+  },
+  {
+   "name": "OW_GLOBALENTITYNAME",
+   "type": "esriFieldTypeString",
+   "alias": "OW_GLOBALENTITYNAME",
+   "length": 100,
+   "domain": null
+  },
+  {
+   "name": "OW_ISCOMPANY",
+   "type": "esriFieldTypeSmallInteger",
+   "alias": "OW_ISCOMPANY",
+   "domain": null
+  },
+  {
+   "name": "OW_ISCONTACT",
+   "type": "esriFieldTypeSmallInteger",
+   "alias": "OW_ISCONTACT",
+   "domain": null
+  },
+  {
+   "name": "OW_EMAIL",
+   "type": "esriFieldTypeString",
+   "alias": "OW_EMAIL",
+   "length": 250,
+   "domain": null
+  },
+  {
+   "name": "OW_BUSINESSPHONE",
+   "type": "esriFieldTypeString",
+   "alias": "OW_BUSINESSPHONE",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "OW_HOMEPHONE",
+   "type": "esriFieldTypeString",
+   "alias": "OW_HOMEPHONE",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "OW_MOBILEPHONE",
+   "type": "esriFieldTypeString",
+   "alias": "OW_MOBILEPHONE",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "OW_OTHERPHONE",
+   "type": "esriFieldTypeString",
+   "alias": "OW_OTHERPHONE",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "OW_FIRSTNAME",
+   "type": "esriFieldTypeString",
+   "alias": "OW_FIRSTNAME",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "OW_LASTNAME",
+   "type": "esriFieldTypeString",
+   "alias": "OW_LASTNAME",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "OW_MIDDLENAME",
+   "type": "esriFieldTypeString",
+   "alias": "OW_MIDDLENAME",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "OW_TITLE",
+   "type": "esriFieldTypeString",
+   "alias": "OW_TITLE",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "OW_CONTACTID",
+   "type": "esriFieldTypeString",
+   "alias": "OW_CONTACTID",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "OW_PREFCOMM",
+   "type": "esriFieldTypeInteger",
+   "alias": "OW_PREFCOMM",
+   "domain": null
+  },
+  {
+   "name": "OW_ISACTIVE",
+   "type": "esriFieldTypeSmallInteger",
+   "alias": "OW_ISACTIVE",
+   "domain": null
+  },
+  {
+   "name": "OW_ADDRESS_LINE1",
+   "type": "esriFieldTypeString",
+   "alias": "OW_ADDRESS_LINE1",
+   "length": 736,
+   "domain": null
+  },
+  {
+   "name": "OW_ADDRESS_LINE2",
+   "type": "esriFieldTypeString",
+   "alias": "OW_ADDRESS_LINE2",
+   "length": 153,
+   "domain": null
+  },
+  {
+   "name": "OW_ADDRESS_TYPE",
+   "type": "esriFieldTypeString",
+   "alias": "OW_ADDRESS_TYPE",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "PM_PMPERMITID",
+   "type": "esriFieldTypeString",
+   "alias": "PM_PMPERMITID",
+   "length": 36,
+   "domain": null
+  },
+  {
+   "name": "PM_ISBILLING",
+   "type": "esriFieldTypeSmallInteger",
+   "alias": "PM_ISBILLING",
+   "domain": null
+  },
+  {
+   "name": "PM_CONTACTCONFIRMSTATUSID",
+   "type": "esriFieldTypeInteger",
+   "alias": "PM_CONTACTCONFIRMSTATUSID",
+   "domain": null
+  },
+  {
+   "name": "PM_NAME",
+   "type": "esriFieldTypeString",
+   "alias": "PM_NAME",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "PM_DESCRIPTION",
+   "type": "esriFieldTypeString",
+   "alias": "PM_DESCRIPTION",
+   "length": 2147483647,
+   "domain": null
+  },
+  {
+   "name": "PM_GLOBALENTITYNAME",
+   "type": "esriFieldTypeString",
+   "alias": "PM_GLOBALENTITYNAME",
+   "length": 100,
+   "domain": null
+  },
+  {
+   "name": "PM_ISCOMPANY",
+   "type": "esriFieldTypeSmallInteger",
+   "alias": "PM_ISCOMPANY",
+   "domain": null
+  },
+  {
+   "name": "PM_ISCONTACT",
+   "type": "esriFieldTypeSmallInteger",
+   "alias": "PM_ISCONTACT",
+   "domain": null
+  },
+  {
+   "name": "PM_EMAIL",
+   "type": "esriFieldTypeString",
+   "alias": "PM_EMAIL",
+   "length": 250,
+   "domain": null
+  },
+  {
+   "name": "PM_BUSINESSPHONE",
+   "type": "esriFieldTypeString",
+   "alias": "PM_BUSINESSPHONE",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "PM_HOMEPHONE",
+   "type": "esriFieldTypeString",
+   "alias": "PM_HOMEPHONE",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "PM_MOBILEPHONE",
+   "type": "esriFieldTypeString",
+   "alias": "PM_MOBILEPHONE",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "PM_OTHERPHONE",
+   "type": "esriFieldTypeString",
+   "alias": "PM_OTHERPHONE",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "PM_FIRSTNAME",
+   "type": "esriFieldTypeString",
+   "alias": "PM_FIRSTNAME",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "PM_LASTNAME",
+   "type": "esriFieldTypeString",
+   "alias": "PM_LASTNAME",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "PM_MIDDLENAME",
+   "type": "esriFieldTypeString",
+   "alias": "PM_MIDDLENAME",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "PM_TITLE",
+   "type": "esriFieldTypeString",
+   "alias": "PM_TITLE",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "PM_CONTACTID",
+   "type": "esriFieldTypeString",
+   "alias": "PM_CONTACTID",
+   "length": 50,
+   "domain": null
+  },
+  {
+   "name": "PM_PREFCOMM",
+   "type": "esriFieldTypeInteger",
+   "alias": "PM_PREFCOMM",
+   "domain": null
+  },
+  {
+   "name": "ISACTIVE",
+   "type": "esriFieldTypeSmallInteger",
+   "alias": "ISACTIVE",
+   "domain": null
+  },
+  {
+   "name": "PM_ADDRESS_LINE1",
+   "type": "esriFieldTypeString",
+   "alias": "PM_ADDRESS_LINE1",
+   "length": 736,
+   "domain": null
+  },
+  {
+   "name": "PM_ADDRESS_LINE2",
+   "type": "esriFieldTypeString",
+   "alias": "PM_ADDRESS_LINE2",
+   "length": 153,
+   "domain": null
+  },
+  {
+   "name": "PM_ADDRESS_TYPE",
+   "type": "esriFieldTypeString",
+   "alias": "PM_ADDRESS_TYPE",
+   "length": 50,
+   "domain": null
+  }
+ ],
+ "geometryField": {
+  "name": "Shape",
+  "type": "esriFieldTypeGeometry",
+  "alias": "Shape"
+ },
+ "indexes": null,
+ "subtypes": [],
+ "relationships": [],
+ "canModifyLayer": true,
+ "canScaleSymbols": false,
+ "hasLabels": false,
+ "capabilities": "Map,Query,Data",
+ "maxRecordCount": 10000,
+ "supportsStatistics": true,
+ "supportsAdvancedQueries": true,
+ "supportedQueryFormats": "JSON, geoJSON, PBF",
+ "isDataVersioned": false,
+ "ownershipBasedAccessControlForFeatures": {"allowOthersToQuery": true},
+ "useStandardizedQueries": true,
+ "advancedQueryCapabilities": {
+  "useStandardizedQueries": true,
+  "supportsStatistics": true,
+  "supportsHavingClause": true,
+  "supportsOrderBy": true,
+  "supportsDistinct": true,
+  "supportsCountDistinct": true,
+  "supportsPagination": true,
+  "supportsTrueCurve": true,
+  "supportsQueryWithDatumTransformation": true,
+  "supportsReturningQueryExtent": true,
+  "supportsQueryWithDistance": true,
+  "supportsSqlExpression": true
+ },
+ "supportsDatumTransformation": true,
+ "dateFieldsTimeReference": {
+  "timeZone": "Central Standard Time",
+  "respectsDaylightSaving": true
+ },
+ "hasMetadata": true,
+ "isDataArchived": false,
+ "archivingInfo": {
+  "supportsQueryWithHistoricMoment": false,
+  "startArchivingMoment": -1
+ },
+ "supportsCoordinatesQuantization": true,
+ "supportsDynamicLegends": true
+}

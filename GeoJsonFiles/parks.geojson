@@ -1,0 +1,90 @@
+{
+ "currentVersion": 10.8,
+ "cimVersion": "2.5.0",
+ "id": 22,
+ "name": "PARKS & RECREATION",
+ "type": "Group Layer",
+ "description": "",
+ "geometryType": null,
+ "copyrightText": "",
+ "parentLayer": null,
+ "subLayers": [
+  {
+   "id": 90,
+   "name": "Recreation Paths"
+  },
+  {
+   "id": 27,
+   "name": "Parks"
+  }
+ ],
+ "minScale": 0,
+ "maxScale": 0,
+ "defaultVisibility": false,
+ "extent": {
+  "xmin": 4867277.700483456,
+  "ymin": 3451391.2021790296,
+  "xmax": 4915429.096713468,
+  "ymax": 3501658.270307049,
+  "spatialReference": {
+   "wkid": 102675,
+   "latestWkid": 3417,
+   "xyTolerance": 0.003280833333333333,
+   "zTolerance": 0.001,
+   "mTolerance": 0.001,
+   "falseX": -1.2745302500000001E8,
+   "falseY": -1.0593162500000001E8,
+   "xyUnits": 3.402171326241821E7,
+   "falseZ": -100000,
+   "zUnits": 10000,
+   "falseM": -100000,
+   "mUnits": 10000
+  }
+ },
+ "hasAttachments": false,
+ "htmlPopupType": "esriServerHTMLPopupTypeNone",
+ "displayField": "",
+ "typeIdField": null,
+ "subtypeFieldName": null,
+ "subtypeField": null,
+ "defaultSubtypeCode": null,
+ "fields": null,
+ "geometryField": {},
+ "indexes": [],
+ "subtypes": [],
+ "relationships": [],
+ "canModifyLayer": false,
+ "canScaleSymbols": false,
+ "hasLabels": false,
+ "capabilities": "Map,Query",
+ "supportsStatistics": false,
+ "supportsAdvancedQueries": false,
+ "supportedQueryFormats": "JSON, geoJSON, PBF",
+ "isDataVersioned": false,
+ "ownershipBasedAccessControlForFeatures": {"allowOthersToQuery": true},
+ "useStandardizedQueries": true,
+ "advancedQueryCapabilities": {
+  "useStandardizedQueries": true,
+  "supportsStatistics": false,
+  "supportsHavingClause": false,
+  "supportsOrderBy": false,
+  "supportsDistinct": false,
+  "supportsCountDistinct": false,
+  "supportsPagination": false,
+  "supportsTrueCurve": true,
+  "supportsQueryWithDatumTransformation": true,
+  "supportsReturningQueryExtent": true,
+  "supportsQueryWithDistance": true,
+  "supportsSqlExpression": false
+ },
+ "supportsDatumTransformation": true,
+ "dateFieldsTimeReference": null,
+ "hasMetadata": true,
+ "isDataArchived": false,
+ "archivingInfo": {
+  "supportsQueryWithHistoricMoment": false,
+  "startArchivingMoment": -1
+ },
+ "supportsCoordinatesQuantization": true,
+ "supportsDynamicLegends": false
+}
