@@ -1,0 +1,24 @@
+Changes to Data
+- Changed (Index 653, PID == 905226110) BldgType from 1 Family, to 2 Family Conversion to match the MS Coded version.
+
+
+New Variables Created - 
+
+- Attic - No Attic, Unifinished, Finished
+- Number_Floors - 1 and 2
+- PUD - True/ False
+- Salary Price Log10
+- Exterior Materials (Now listed as dummy variables)
+- Feature Locations - Distance to interesting features is now dummified.
+
+
+
+Dropped Columns - 
+
+- (Anyone that was edited or dummified)
+
+
+
+Outlier being removed -
+
+- 908154205 - It is a partial sale with the price being less than a third of predicted. Seems like it was a large home that buyer was getting while it was incomplete or purchasing the right to buy it later. Clearly, not indicative of the actual value.

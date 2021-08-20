@@ -1,0 +1,888 @@
+{
+ "currentVersion": 10.8,
+ "id": 1,
+ "name": "Zoning District",
+ "type": "Feature Layer",
+ "description": "",
+ "geometryType": "esriGeometryPolygon",
+ "sourceSpatialReference": {
+  "wkid": 102675,
+  "latestWkid": 3417
+ },
+ "copyrightText": "",
+ "parentLayer": null,
+ "subLayers": [],
+ "minScale": 0,
+ "maxScale": 0,
+ "drawingInfo": {
+  "renderer": {
+   "type": "uniqueValue",
+   "field1": "ZONE_",
+   "field2": null,
+   "field3": null,
+   "defaultSymbol": null,
+   "defaultLabel": null,
+   "uniqueValueInfos": [
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       122,
+       201,
+       77,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Agricultural Zone",
+     "label": "Agricultural Zone \"A\" (sec 29.600)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       255,
+       255,
+       191,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Residential Low Density Zone",
+     "label": "Residential Low Density Zone \"RL\" (sec 29.701)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       255,
+       215,
+       38,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Residential Medium Density Zone",
+     "label": "Residential Medium Density Zone \"RM\" (sec 29.702)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       255,
+       233,
+       38,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Urban Core Residential Medium Density Zone",
+     "label": "Urban Core Residential Medium Density Zone \"UCRM\" (sec 29.703)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       255,
+       188,
+       87,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Residential High Density Zone",
+     "label": "Residential High Density Zone \"RH\" (sec 29.704)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       184,
+       128,
+       44,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Residential Low Density Park Zone",
+     "label": "Residential Low Density Park Zone \"RLP\" (sec 29.705)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       196,
+       136,
+       242,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Neighborhood Commercial Zone",
+     "label": "Neighborhood Commercial Zone \"NC\" (sec 29.801)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       255,
+       77,
+       0,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Community Commercial Node",
+     "label": "Community Commercial Node \"CCN\" (sec 29.802)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       232,
+       200,
+       204,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Highway-Oriented Commercial Zone",
+     "label": "Highway-Oriented Commercial Zone \"HOC\" (sec 29.804)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       222,
+       0,
+       44,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Planned Regional Commercial Zone",
+     "label": "Planned Regional Commercial Zone \"PRC\" (sec 29.805)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       255,
+       149,
+       0,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Community Commercial/Residential",
+     "label": "Community Commercial/Residential \"CCR\" (sec 29.806)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       255,
+       0,
+       144,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Convenience Commercial Node",
+     "label": "Convenience Commercial Node \"CVCN\" (sec 29.807)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       255,
+       125,
+       144,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Convenience General Service",
+     "label": "Convenience General Service \"CGS\" (sec 29.810)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       224,
+       88,
+       81,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Downtown Service Center",
+     "label": "Downtown Service Center \"DSC\" (sec 29.808)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       255,
+       0,
+       197,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Downtown Gateway Commercial Area",
+     "label": "Downtown Gateway Commercial Area",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       255,
+       54,
+       36,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Campustown Service Center",
+     "label": "Campustown Service Center \"CSC\" (sec 29.809)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       201,
+       201,
+       191,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "General Industrial Zone",
+     "label": "General Industrial Zone \"GI\" (sec 29.901)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       130,
+       130,
+       130,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Planned Industrial Zone",
+     "label": "Planned Industrial Zone \"PI\" (sec 29.902)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       173,
+       173,
+       173,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Research Park Innovation District",
+     "label": "Research Park Innovation District \"RI\" (sec 29.903)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       102,
+       128,
+       242,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Hospital-Medical District",
+     "label": "Hospital-Medical District \"S-HM\" (sec 29.1001)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       195,
+       220,
+       247,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Government/Airport District",
+     "label": "Government/Airport District \"S-GA\" (sec 29.1002)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       226,
+       82,
+       255,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "South Lincoln Mixed-Use District",
+     "label": "South Lincoln Mixed-Use District \"S-SMD\" (sec 29.1003)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       245,
+       203,
+       135,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Village Residential District",
+     "label": "Village Residential District ''F-VR'' (sec 29.1201)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       248,
+       252,
+       109,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Suburban Residential Floating Zoning Residential Low Density",
+     "label": "Suburban Residential Zone Residential Low Density ''FS-RL'' (sec 29.1202(4)-1)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       255,
+       248,
+       38,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Suburban Residential Floating Zoning Residential Medium Density",
+     "label": "Suburban Residential Zone Residential Medium Density ''FS-RM''  (sec 29.1202(4)-2)",
+     "description": ""
+    },
+    {
+     "symbol": {
+      "type": "esriSFS",
+      "style": "esriSFSSolid",
+      "color": [
+       240,
+       236,
+       24,
+       153
+      ],
+      "outline": {
+       "type": "esriSLS",
+       "style": "esriSLSSolid",
+       "color": [
+        130,
+        130,
+        130,
+        153
+       ],
+       "width": 1
+      }
+     },
+     "value": "Planned Residence District",
+     "label": "Planned Residence District ''F-PRD''  (sec 29.1203)",
+     "description": ""
+    }
+   ],
+   "fieldDelimiter": ","
+  },
+  "transparency": 0,
+  "labelingInfo": [
+   {
+    "labelPlacement": "esriServerPolygonPlacementAlwaysHorizontal",
+    "where": null,
+    "labelExpression": "[ZONE_LABEL]",
+    "useCodedValues": true,
+    "symbol": {
+     "type": "esriTS",
+     "color": [
+      0,
+      0,
+      0,
+      255
+     ],
+     "backgroundColor": null,
+     "borderLineColor": null,
+     "borderLineSize": null,
+     "verticalAlignment": "bottom",
+     "horizontalAlignment": "center",
+     "rightToLeft": false,
+     "angle": 0,
+     "xoffset": 0,
+     "yoffset": 0,
+     "kerning": false,
+     "haloColor": [
+      255,
+      255,
+      255,
+      153
+     ],
+     "haloSize": 1,
+     "font": {
+      "family": "Arial",
+      "size": 11,
+      "style": "normal",
+      "weight": "normal",
+      "decoration": "none"
+     }
+    },
+    "minScale": 0,
+    "maxScale": 0
+   }
+  ]
+ },
+ "defaultVisibility": true,
+ "extent": {
+  "xmin": 4867246.238863304,
+  "ymin": 3453937.00009723,
+  "xmax": 4915425.780052632,
+  "ymax": 3491478.2937459946,
+  "spatialReference": {
+   "wkid": 102675,
+   "latestWkid": 3417
+  }
+ },
+ "hasAttachments": false,
+ "htmlPopupType": "esriServerHTMLPopupTypeNone",
+ "displayField": "SUBTYPE",
+ "typeIdField": null,
+ "subtypeFieldName": null,
+ "subtypeField": null,
+ "defaultSubtypeCode": null,
+ "fields": [
+  {
+   "name": "OBJECTID",
+   "type": "esriFieldTypeOID",
+   "alias": "OBJECTID",
+   "domain": null
+  },
+  {
+   "name": "ZONE_",
+   "type": "esriFieldTypeString",
+   "alias": "ZONE_",
+   "length": 100,
+   "domain": null
+  },
+  {
+   "name": "ZONE_LABEL",
+   "type": "esriFieldTypeString",
+   "alias": "ZONE_LABEL",
+   "length": 60,
+   "domain": null
+  },
+  {
+   "name": "ORDINANCE_NO",
+   "type": "esriFieldTypeString",
+   "alias": "ORDINANCE_NO",
+   "length": 10,
+   "domain": null
+  },
+  {
+   "name": "SUBTYPE",
+   "type": "esriFieldTypeInteger",
+   "alias": "SUBTYPE",
+   "domain": null
+  },
+  {
+   "name": "MODIFED_DATE",
+   "type": "esriFieldTypeDate",
+   "alias": "MODIFED_DATE",
+   "length": 8,
+   "domain": null
+  },
+  {
+   "name": "LEGEND",
+   "type": "esriFieldTypeString",
+   "alias": "LEGEND",
+   "length": 100,
+   "domain": null
+  },
+  {
+   "name": "SHAPE",
+   "type": "esriFieldTypeGeometry",
+   "alias": "Shape",
+   "domain": null
+  },
+  {
+   "name": "SHAPE.STArea()",
+   "type": "esriFieldTypeDouble",
+   "alias": "SHAPE.STArea()",
+   "domain": null
+  },
+  {
+   "name": "SHAPE.STLength()",
+   "type": "esriFieldTypeDouble",
+   "alias": "SHAPE.STLength()",
+   "domain": null
+  }
+ ],
+ "geometryField": {
+  "name": "SHAPE",
+  "type": "esriFieldTypeGeometry",
+  "alias": "Shape"
+ },
+ "indexes": [
+  {
+   "name": "R411_pk",
+   "fields": "OBJECTID",
+   "isAscending": true,
+   "isUnique": true,
+   "description": ""
+  },
+  {
+   "name": "S371_idx",
+   "fields": "SHAPE",
+   "isAscending": true,
+   "isUnique": true,
+   "description": ""
+  }
+ ],
+ "subtypes": [],
+ "relationships": [],
+ "canModifyLayer": false,
+ "canScaleSymbols": false,
+ "hasLabels": true,
+ "capabilities": "Map,Query,Data",
+ "maxRecordCount": 1000,
+ "supportsStatistics": true,
+ "supportsAdvancedQueries": true,
+ "supportedQueryFormats": "JSON, geoJSON",
+ "isDataVersioned": true,
+ "ownershipBasedAccessControlForFeatures": {"allowOthersToQuery": true},
+ "useStandardizedQueries": true,
+ "advancedQueryCapabilities": {
+  "useStandardizedQueries": true,
+  "supportsStatistics": true,
+  "supportsHavingClause": true,
+  "supportsCountDistinct": true,
+  "supportsOrderBy": true,
+  "supportsDistinct": true,
+  "supportsPagination": true,
+  "supportsTrueCurve": true,
+  "supportsReturningQueryExtent": true,
+  "supportsQueryWithDistance": true,
+  "supportsSqlExpression": true
+ },
+ "supportsDatumTransformation": true,
+ "dateFieldsTimeReference": {
+  "timeZone": "Central Standard Time",
+  "respectsDaylightSaving": true
+ },
+ "supportsCoordinatesQuantization": true
+}
