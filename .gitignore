@@ -5,6 +5,8 @@ __pycache__/
 
 # Orens API Keys
 keys.py
+./GeoJsonFiles/iowa-latest-free/Unneded_Items/
+./Oren/Notes/
 
 # DS_Store
 .DS_Store
