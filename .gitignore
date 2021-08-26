@@ -8,6 +8,9 @@ keys.py
 ./GeoJsonFiles/iowa-latest-free/Unneded_Items/
 ./Oren/Notes/
 
+# Maybe all the GeoJsonFiles
+./GeoJsonFiles/iowa-latest-free/*
+
 # DS_Store
 .DS_Store
 
