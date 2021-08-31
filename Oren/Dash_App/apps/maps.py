@@ -127,10 +127,10 @@ geojson_filter = assign(
 ##### LAYOUT SECTION: BOOTSTRAP
 
 
-app.layout = html.Div([
+layout = html.Div([
     dbc.Container([
     dbc.Row([
-        dbc.Col(html.H1("Machine Learning for Ames Iowa",
+        dbc.Col(html.H3("Mapping Housing and Points of Interest in Ames Iowa",
                         className='text-center text-primary, mb-4'),
                 width=12)
     ]),
@@ -158,15 +158,17 @@ app.layout = html.Div([
                 value=[100000, 200000]
             ),
             html.H5("Bedrooms",
-                    className='text-center text-primary'),
+                    className='text-left text-primary'),
             # html.P(id="out_bedrooms",
             #        className='text-center text-primary, mb-1, small'),
         dcc.Input(
             id="input_bedrooms",
             type="number",
             placeholder="Input Number",
+            step=1,
             min=0,
-            max=5
+            max=5,
+            style={'width': 120}
         ),
             html.H5("Bathrooms",
                     className='text-center text-primary'),
@@ -176,8 +178,9 @@ app.layout = html.Div([
             id="input_bathrooms",
             type="number",
             placeholder="Input Number",
-            min=0,
-            max=5
+            min=1,
+            max=5,
+            style={'width': 120}
         ),
 
             html.H5("Sq Footage Slider",

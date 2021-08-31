@@ -127,8 +127,7 @@ geojson_filter = assign(
 ##### LAYOUT SECTION: BOOTSTRAP
 
 
-app.layout = html.Div([
-    dbc.Container([
+app.layout = dbc.Container([
     dbc.Row([
         dbc.Col(html.H1("Machine Learning for Ames Iowa",
                         className='text-center text-primary, mb-4'),
@@ -200,6 +199,9 @@ app.layout = html.Div([
                 },
                 value=[1000, 2000]
             )
+
+
+
 
         ], width={'size':3, 'order': 1}),
         dbc.Col([
@@ -365,7 +367,6 @@ app.layout = html.Div([
 
     ])
 ], fluid=True)
-])
 
 #
 # app.layout = html.Div(children=[
