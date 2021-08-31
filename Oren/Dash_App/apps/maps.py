@@ -44,13 +44,15 @@ poi_fountain = dlx.geojson_to_geobuf(json.load(open('./data/poi_fountain.geojson
 poi_misc = dlx.geojson_to_geobuf(json.load(open('./data/poi_misc.geojson')))
 poi_church = dlx.geojson_to_geobuf(json.load(open('./data/poi_churches.geojson')))
 
-housing = pd.read_csv('./data/house_surrounding_avg_prices.csv')
+housing_basic = pd.read_csv('./data/basic_housing.csv')
+
+housing_geo = pd.read_csv('./data/house_surrounding_avg_prices.csv')
 
 housing_geo = gpd.GeoDataFrame(
-    housing, geometry=gpd.points_from_xy(housing.longitude, housing.latitude))
+    housing_geo, geometry=gpd.points_from_xy(housing_geo.longitude, housing_geo.latitude))
 
-housing = json.loads(housing_geo.to_json())
-
+housing_geo = json.loads(housing_geo.to_json())
+geojson = housing_geo
 
 # ########### Creates Icons for Map
 draw_church = assign("""function(feature, latlng){
@@ -117,8 +119,11 @@ iconSize: [15, 25]});
 return L.marker(latlng, {icon: icon_misc});
 }""")
 
-dd_options = [dict(value=c['properties']['PID'], label=c['properties']['PID']) for c in housing['features']]
-dd_defaults = [o["value"] for o in dd_options]
+# dd_options = [dict(value=c['properties']['PID'], label=c['properties']['PID']) for c in housing_geo['features']]
+# dd_defaults = [o["value"] for o in dd_options]
+
+# geojson_filter = assign(
+#     "function(feature, context){{return context.props.hideout.includes(feature.properties.PID);}}")
 
 geojson_filter = assign(
     "function(feature, context){{return context.props.hideout.includes(feature.properties.PID);}}")
@@ -212,8 +217,8 @@ layout = html.Div([
                     [dl.Overlay(
                         dl.LayerGroup(
                             dl.GeoJSON(
-                                data=housing,
-                                options=dict(filter=geojson_filter),
+                                data=geoson,
+                                options=dict(filter=geojson_filter), hideout= geoson,
                                 id="housing_id", zoomToBoundsOnClick=True)
                         ), name="Housing", checked=False
                     )
@@ -401,6 +406,26 @@ def house_click(feature):
         return f"You clicked {feature['properties']['PID']}"
 
 
+##### MAIN CALLBACK HERE TESTING IT OUT
+@app.callback(
+    dash.dependencies.Output('PID_list', 'children'),
+    # dash.dependencies.Output("housing_id", "hideout"),
+    dash.dependencies.Input('price', 'value'),
+    dash.dependencies.Input('sqft', 'value'),
+    dash.dependencies.Input("input_bathrooms", "value"),
+    dash.dependencies.Input("input_bedrooms", "value")
+)
+def update_output(prices, sqfts, bathrms, bedrms):
+    return list(housing_basic[(housing_basic['GrLivArea'] > prices[0]) &
+                       (housing_basic['GrLivArea'] < prices[1]) &
+                       (housing_basic['LotArea'] > sqfts[0]) &
+                       (housing_basic['LotArea'] < sqfts[1]) &
+                       (housing_basic['FullBath'] == bathrms) &
+                       (housing_basic['BedroomAbvGr'] == bedrms)]
+                ['PID'])
+
+# some work on callbacks folded here
+
 @app.callback(
     dash.dependencies.Output('output-container-range-slider', 'children'),
     [dash.dependencies.Input('price', 'value')])
@@ -420,6 +445,7 @@ def update_output(value):
     [Input("input_bedrooms", "value")],
 )
 def cb_render(*vals):
+    # list(housing[housing['BedroomAbvGr'] == 2]['PID'])
     return " | ".join((str(val) for val in vals if val))
 
 @app.callback(
@@ -430,7 +456,9 @@ def cb_render(*vals):
     return " | ".join((str(val) for val in vals if val))
 
 
-app.clientside_callback("function(x){return x;}", Output("housing_id", "hideout"), Input("dd", "value"))
-
+app.clientside_callback("function(x){return x;}",
+                        Output("geojson", "hideout"),
+                        Input("PID_list", "value"))
+#
 if __name__ == '__main__':
     app.run_server(debug=True)

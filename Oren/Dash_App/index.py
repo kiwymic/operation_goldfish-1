@@ -7,14 +7,14 @@ import dash_table
 
 from app import app
 from app import server
-from apps import maps
+from apps import maps, ml_test
 from data import loading_stuff
 
 dropdown = dbc.DropdownMenu(
     children=[
         dbc.DropdownMenuItem("Home", href="/index"),
         dbc.DropdownMenuItem("Maps", href="/maps"),
-        dbc.DropdownMenuItem("Plan", href="/plan"),
+        dbc.DropdownMenuItem("Machine Learning", href="/ml_test"),
     ],
     nav = True,
     in_navbar = True,
@@ -34,7 +34,7 @@ navbar = dbc.Navbar(
                     align="center",
                     no_gutters=False,
                 ),
-                href="/home",
+                href="/index",
             ),
             dbc.NavbarToggler(id="navbar-toggler2"),
             dbc.Collapse(
@@ -80,7 +80,7 @@ def display_page(pathname):
     elif pathname == '/singapore':
         return plans.layout
     else:
-        return home.layout
+        return maps.layout
 
 # if __name__ == '__main__':
 #     app.run_server(host='127.0.0.1', debug=True)
