@@ -153,16 +153,17 @@ layout = html.Div([
             dcc.RangeSlider(
                 id='price',
                 min=0,
-                max=500000,
+                max=800000,
                 step=100,
                 marks={
                     0: '$0',
                     # 100000: '$100,000',
                     # 200000: '$200,000',
-                    250000: '$250,000',
+                    # 250000: '$250,000',
                     # 300000: '$300,000',
-                    # 400000: '$400,000',
-                    500000: '$500,000',
+                    400000: '$400,000',
+                    # 600000: '$600,000',
+                    800000: '$800,000',
                 },
                 value=[100000, 200000]
             ),
@@ -176,7 +177,7 @@ layout = html.Div([
             placeholder="Input Number",
             step=1,
             min=0,
-            max=5,
+            max=6,
             value=1,
             style={'width': 120}
         ),
@@ -201,18 +202,18 @@ layout = html.Div([
             dcc.RangeSlider(
                 id='sqft',
                 min=0,
-                max=5000,
+                max=2500,
                 step=10,
                 marks={
                     0: '0',
-                    # 100000: '$100,000',
+                    1250: '1250',
                     # 200000: '$200,000',
                     2500: '2,500',
                     # 300000: '$300,000',
                     # 400000: '$400,000',
                     5000: '5,000',
                 },
-                value=[1000, 2000]
+                value=[100, 1000]
             )
         ], width={'size':3, 'order': 1}),
         dbc.Col([
@@ -435,12 +436,21 @@ layout = html.Div([
 
 # some work on callbacks folded here
 
-@app.callback(
-    dash.dependencies.Output('output-container-range-slider', 'children'),
-    dash.dependencies.Input('price', 'value'))
-def update_output(value):
-    print(value)
-    return '${:,} - ${:,}'.format(value[0], value[1])
+# @app.callback(
+#     dash.dependencies.Output('output-container-range-slider', 'children'),
+#     dash.dependencies.Input('price', 'value'))
+# def update_output(value):
+#     print(value)
+#     return ('${:,} - ${:,}'.format(value[0], value[1]))
+
+
+
+
+# @app.callback(
+#     dash.dependencies.Output('output-container-range-slider', 'children'),
+#     [dash.dependencies.Input('price', 'value')])
+# def update_output(value):
+#     return ('${:,} - ${:,}'.format(value[0], value[1]))
 #
 #
 # @app.callback(
@@ -471,7 +481,7 @@ def update_output(value):
 #                         Input("dd", "value"))
 #
 
-app.clientside_callback("function(x){return x;}", Output("housing_id", "hideout"), Input("dd", "value"))
+# app.clientside_callback("function(x){return x;}", Output("housing_id", "hideout"), Input("dd", "value"))
 
 
 

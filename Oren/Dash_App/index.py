@@ -77,10 +77,41 @@ app.layout = html.Div([
 def display_page(pathname):
     if pathname == '/maps':
         return maps.layout
-    elif pathname == '/singapore':
+    elif pathname == '/plans':
         return plans.layout
     else:
         return maps.layout
+
+@app.callback(
+    Output('output-container-range-slider', 'children'),
+    [Input('price', 'value')])
+def update_output_price_range(value):
+    return ('${:,} - ${:,}'.format(value[0], value[1]))
+
+
+
+@app.callback(
+    # dash.dependencies.Output('PID_list', 'children'),
+    Output("housing_id", "hideout"),
+    Input('price', 'value'),
+    Input('sqft', 'value'),
+    Input("input_bathrooms", "value"),
+    Input("input_bedrooms", "value")
+)
+def update_output(prices, sqfts, bathrms, bedrms):
+    housing_basic = maps.housing_basic
+    foo = list(housing_basic[(housing_basic['SalePrice'] > prices[0]) &
+                       (housing_basic['SalePrice'] < prices[1]) &
+                       (housing_basic['GrLivArea'] > sqfts[0]) &
+                       (housing_basic['GrLivArea'] < sqfts[1]) &
+                       (housing_basic['FullBath'] == bathrms) &
+                       (housing_basic['BedroomAbvGr'] == bedrms)]
+                ['PID'])
+    print(foo)
+    # print((housing_basic['GrLivArea'] > prices[0]))
+    print(housing_basic['GrLivArea'])
+    return dict(name=foo)
+
 
 # if __name__ == '__main__':
 #     app.run_server(host='127.0.0.1', debug=True)
