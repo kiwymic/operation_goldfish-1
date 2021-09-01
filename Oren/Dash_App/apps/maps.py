@@ -1,9 +1,9 @@
 ## Plotly and Dash Loading
 import plotly.express as px
-from jupyter_dash import JupyterDash
+# from jupyter_dash import JupyterDash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
 from dash_extensions.javascript import assign
@@ -24,6 +24,7 @@ import pandas_datareader.data as web
 # from geopy.distance import geodesic
 # import shapely.geometry
 import geobuf
+
 
 # app = Dash(__name__)
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI],
@@ -52,7 +53,6 @@ housing_geo = gpd.GeoDataFrame(
     housing_geo, geometry=gpd.points_from_xy(housing_geo.longitude, housing_geo.latitude))
 
 housing_geo = json.loads(housing_geo.to_json())
-geojson = housing_geo
 
 # ########### Creates Icons for Map
 draw_church = assign("""function(feature, latlng){
@@ -119,14 +119,17 @@ iconSize: [15, 25]});
 return L.marker(latlng, {icon: icon_misc});
 }""")
 
-# dd_options = [dict(value=c['properties']['PID'], label=c['properties']['PID']) for c in housing_geo['features']]
-# dd_defaults = [o["value"] for o in dd_options]
+dd_options = [dict(value=c['properties']['PID'], label=c['properties']['PID']) for c in housing_geo['features']]
+
+
+dd_defaults = [o["value"] for o in dd_options]
+
+geojson_filter = assign(
+    "function(feature, context){return context.props.hideout.name.includes(feature.properties.PID);}"
+)
 
 # geojson_filter = assign(
 #     "function(feature, context){{return context.props.hideout.includes(feature.properties.PID);}}")
-
-geojson_filter = assign(
-    "function(feature, context){{return context.props.hideout.includes(feature.properties.PID);}}")
 
 
 ##### LAYOUT SECTION: BOOTSTRAP
@@ -141,6 +144,7 @@ layout = html.Div([
     ]),
 
     dbc.Row([
+        ### INPUTS
         dbc.Col([
             html.H5("Price Slider",
                     className='text-center text-primary'),
@@ -173,6 +177,7 @@ layout = html.Div([
             step=1,
             min=0,
             max=5,
+            value=1,
             style={'width': 120}
         ),
             html.H5("Bathrooms",
@@ -185,6 +190,7 @@ layout = html.Div([
             placeholder="Input Number",
             min=1,
             max=5,
+            value=1,
             style={'width': 120}
         ),
 
@@ -208,7 +214,6 @@ layout = html.Div([
                 },
                 value=[1000, 2000]
             )
-
         ], width={'size':3, 'order': 1}),
         dbc.Col([
             dl.Map([
@@ -217,13 +222,12 @@ layout = html.Div([
                     [dl.Overlay(
                         dl.LayerGroup(
                             dl.GeoJSON(
-                                data=geoson,
-                                options=dict(filter=geojson_filter), hideout= geoson,
+                                data=housing_geo,
+                                options=dict(filter=geojson_filter), hideout= dict(name=dd_defaults),
                                 id="housing_id", zoomToBoundsOnClick=True)
                         ), name="Housing", checked=False
-                    )
-                    ] +
-                    [dl.Overlay(
+                    ),
+                        dl.Overlay(
                         dl.LayerGroup(
                             dl.GeoJSON(
                                 data=poi_church,
@@ -363,18 +367,20 @@ layout = html.Div([
                        'margin': "auto",
                        "display": "block"}
             )
-
-
-
-        ], width={'size':9, 'order': 2})
-    ]),
-
-    dbc.Row([
-
-    ])
-], fluid=True)
+    #         ,
+    # dcc.Dropdown(id="dd", value=dd_defaults, options=dd_options,
+    #         clearable=False, multi=True)
+    #     ], width={'size':9, 'order': 2}
+        ])
 ])
+    ])
 
+#     dbc.Row([
+#     ])
+# ], fluid=True)
+# ])
+])
+# ])
 #
 # app.layout = html.Div(children=[
 # ,
@@ -400,65 +406,75 @@ layout = html.Div([
 # ])
 
 
-@app.callback(Output("PIDs", "children"), [Input("housing_id", "click_feature")])
-def house_click(feature):
-    if feature is not None:
-        return f"You clicked {feature['properties']['PID']}"
+# @app.callback(Output("PIDs", "children"), [Input("housing_id", "click_feature")])
+# def house_click(feature):
+#     if feature is not None:
+#         return f"You clicked {feature['properties']['PID']}"
 
 
 ##### MAIN CALLBACK HERE TESTING IT OUT
-@app.callback(
-    dash.dependencies.Output('PID_list', 'children'),
-    # dash.dependencies.Output("housing_id", "hideout"),
-    dash.dependencies.Input('price', 'value'),
-    dash.dependencies.Input('sqft', 'value'),
-    dash.dependencies.Input("input_bathrooms", "value"),
-    dash.dependencies.Input("input_bedrooms", "value")
-)
-def update_output(prices, sqfts, bathrms, bedrms):
-    return list(housing_basic[(housing_basic['GrLivArea'] > prices[0]) &
-                       (housing_basic['GrLivArea'] < prices[1]) &
-                       (housing_basic['LotArea'] > sqfts[0]) &
-                       (housing_basic['LotArea'] < sqfts[1]) &
-                       (housing_basic['FullBath'] == bathrms) &
-                       (housing_basic['BedroomAbvGr'] == bedrms)]
-                ['PID'])
+# @app.callback(
+#     # dash.dependencies.Output('PID_list', 'children'),
+#     dash.dependencies.Output("housing_id", "hideout"),
+#     dash.dependencies.Input('price', 'value'),
+#     dash.dependencies.Input('sqft', 'value'),
+#     dash.dependencies.Input("input_bathrooms", "value"),
+#     dash.dependencies.Input("input_bedrooms", "value")
+# )
+# def update_output(prices, sqfts, bathrms, bedrms):
+#     foo = list(housing_basic[(housing_basic['GrLivArea'] > prices[0]) &
+#                        (housing_basic['GrLivArea'] < prices[1]) &
+#                        (housing_basic['LotArea'] > sqfts[0]) &
+#                        (housing_basic['LotArea'] < sqfts[1]) &
+#                        (housing_basic['FullBath'] == bathrms) &
+#                        (housing_basic['BedroomAbvGr'] == bedrms)]
+#                 ['PID'])
+#     print(foo)
+#     return dict(name=foo)
+
 
 # some work on callbacks folded here
 
 @app.callback(
     dash.dependencies.Output('output-container-range-slider', 'children'),
-    [dash.dependencies.Input('price', 'value')])
+    dash.dependencies.Input('price', 'value'))
 def update_output(value):
-    return ('${:,} - ${:,}'.format(value[0], value[1]))
-
-
-@app.callback(
-    dash.dependencies.Output('output-container-sq-foot-slider', 'children'),
-    [dash.dependencies.Input('sqft', 'value')])
-def update_output(value):
-    return ('{:,} - {:,} sq. ft.'.format(value[0], value[1]))
-
-
-@app.callback(
-    Output("out_bedrooms", "children"),
-    [Input("input_bedrooms", "value")],
-)
-def cb_render(*vals):
-    # list(housing[housing['BedroomAbvGr'] == 2]['PID'])
-    return " | ".join((str(val) for val in vals if val))
-
-@app.callback(
-    Output("out_bathrooms", "children"),
-    [Input("input_bathrooms", "value")],
-)
-def cb_render(*vals):
-    return " | ".join((str(val) for val in vals if val))
-
-
-app.clientside_callback("function(x){return x;}",
-                        Output("geojson", "hideout"),
-                        Input("PID_list", "value"))
+    print(value)
+    return '${:,} - ${:,}'.format(value[0], value[1])
 #
+#
+# @app.callback(
+#     dash.dependencies.Output('output-container-sq-foot-slider', 'children'),
+#     [dash.dependencies.Input('sqft', 'value')])
+# def update_output(value):
+#     return ('{:,} - {:,} sq. ft.'.format(value[0], value[1]))
+#
+#
+# @app.callback(
+#     Output("out_bedrooms", "children"),
+#     [Input("input_bedrooms", "value")],
+# )
+# def cb_render(*vals):
+#     # list(housing[housing['BedroomAbvGr'] == 2]['PID'])
+#     return " | ".join((str(val) for val in vals if val))
+#
+# @app.callback(
+#     Output("out_bathrooms", "children"),
+#     [Input("input_bathrooms", "value")],
+# )
+# def cb_render(*vals):
+#     return " | ".join((str(val) for val in vals if val))
+#
+
+# app.clientside_callback("function(x){return x;}",
+#                         Output("housing_geo", "hideout"),
+#                         Input("dd", "value"))
+#
+
+app.clientside_callback("function(x){return x;}", Output("housing_id", "hideout"), Input("dd", "value"))
+
+
+
+
 if __name__ == '__main__':
     app.run_server(debug=True)

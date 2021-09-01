@@ -8,7 +8,7 @@ import dash_table
 from app import app
 from app import server
 from apps import maps, ml_test
-from data import loading_stuff
+# from data import loading_stuff
 
 dropdown = dbc.DropdownMenu(
     children=[

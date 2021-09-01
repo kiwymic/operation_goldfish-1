@@ -100,9 +100,7 @@ window.dashExtensions = Object.assign({}, window.dashExtensions, {
             });
         },
         function11: function(feature, context) {
-            {
-                return context.props.hideout.includes(feature.properties.PID);
-            }
+            return context.props.hideout.name.includes(feature.properties.PID);
         }
     }
 });
