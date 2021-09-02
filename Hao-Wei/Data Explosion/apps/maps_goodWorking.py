@@ -32,7 +32,6 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI],
                             'content': 'width=device-width, initial-scale=1.0'}]
                 )
 
-
 ########## Loads geojson files as geobuf to speed up system
 poi_public = dlx.geojson_to_geobuf(json.load(open('./data/poi_public.geojson')))
 poi_health = dlx.geojson_to_geobuf(json.load(open('./data/poi_health.geojson')))
@@ -54,8 +53,6 @@ housing_geo = gpd.GeoDataFrame(
     housing_geo, geometry=gpd.points_from_xy(housing_geo.longitude, housing_geo.latitude))
 
 housing_geo = json.loads(housing_geo.to_json())
-
-
 
 # ########### Creates Icons for Map
 draw_church = assign("""function(feature, latlng){
@@ -181,20 +178,20 @@ layout = html.Div([
             step=1,
             min=0,
             max=6,
-            value=1,
+            # value=1,
             style={'width': 120}
         ),
             html.H5("Bathrooms",
                     className='text-center text-primary'),
-            html.P(id="out_bedrooms",
-                   className='text-center text-primary, mb-1, small'),
+            # html.P(id="out_bedrooms",
+            #        className='text-center text-primary, mb-1, small'),
         dcc.Input(
             id="input_bathrooms",
             type="number",
             placeholder="Input Number",
             min=1,
             max=5,
-            value=1,
+            # value=1,
             style={'width': 120}
         ),
 
