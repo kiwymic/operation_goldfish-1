@@ -8,8 +8,6 @@ import numpy as np;
 import plotly.express as px;
 import plotly.graph_objs as go;
 
-from dictionaries import *;
-
 from app import app
 from app import server
 
@@ -17,7 +15,6 @@ from app import server
 from catboost import CatBoostRegressor;
 from sklearn.preprocessing import LabelEncoder;
 
-print(dummies);
 
 ##### Load the housing data (and probably the pickle cat)
 housing = pd.read_csv('./data/ames_housing_price_data_v4.csv', index_col = 0);
