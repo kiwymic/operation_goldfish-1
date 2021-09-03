@@ -316,10 +316,12 @@ def update_table(pid_data, page_current,page_size):
     Input('pid_scatter', 'clickData'))
 def update_selected_on_click(clickData):
     if not clickData: return;
-#     temp = house_coords.reset_index();
-#     print(3, clickData['points'][0]['hovertext'])
-#     print(temp[temp["PID"] == clickData['points'][0]['hovertext']][["Address"]]);
-    return clickData['points'][0]['hovertext'];
+    temp = housing_coords.reset_index();
+    temp = temp[temp["PID"] == clickData['points'][0]['hovertext']]
+    temp["Address"] = temp["Address"].apply(lambda x: x[:-17]); # ", Ames, Iowa, USA"
+    address = temp[temp["PID"] == clickData['points'][0]['hovertext']]["Address"];
+    return address;
+#     return clickData['points'][0]['hovertext'];
 
 @app.callback(
     Output('pid_quality_change', 'figure'),
@@ -330,6 +332,12 @@ def update_quality_chart(clickData):
     temp_house = x.reset_index();
     PID = clickData['points'][0]['hovertext'];
     temp_house = temp_house[temp_house["PID"] == PID];
+    
+    # Compute the red dot.
+    ovl_qual = int(temp_house["OverallQual"]);
+    temp_frame = temp_house.set_index("PID");
+    pred_price = 10**cat.predict(temp_frame)[0];
+    
     temp_house.drop("OverallQual", axis = 1, inplace = True);
     temp = pd.DataFrame({"PID": [PID for i in range(10)], "OverallQual": range(1,11,1)})
     temp_house = temp_house.merge(temp, on="PID");
@@ -337,8 +345,11 @@ def update_quality_chart(clickData):
     
     temp_house["Sale Price Predicted"] = 10**cat.predict(temp_house)
     
-    fig = px.scatter(temp_house, x="OverallQual", y="Sale Price Predicted");
-    fig.update_traces(mode='lines+markers');
+    fig = px.line(temp_house, x="OverallQual", y="Sale Price Predicted", markers=True);
+    fig.add_trace(go.Scatter(x=[ovl_qual], y=[pred_price], mode='markers',\
+                  marker=dict(size=12, color = '#FF11FF')));
+    # fig.update_traces(marker=dict(size=12, color = '#5511FF'));
+    fig.update_layout(showlegend=False);
     return fig;
 
 @app.callback(
@@ -350,9 +361,12 @@ def update_gndarea_chart(clickData):
     temp_house = x.reset_index();
     PID = clickData['points'][0]['hovertext'];
     temp_house = temp_house[temp_house["PID"] == PID];
+    
+    # Compute the red dot.
     gr_area = int(temp_house["GrLivArea"]);
     temp_frame = temp_house.set_index("PID");
     pred_price = 10**cat.predict(temp_frame)[0];
+    
     temp_house.drop("GrLivArea", axis = 1, inplace = True);
     temp = pd.DataFrame({"PID": [PID for i in range(300,4800, 10)], "GrLivArea": range(300,4800, 10)})
     temp_house = temp_house.merge(temp, on="PID");
@@ -360,19 +374,10 @@ def update_gndarea_chart(clickData):
     
     temp_house["Sale Price Predicted"] = 10**cat.predict(temp_house)
     
-#     fig = go.Figure();
-#     fig1 = go.Scatter(temp_house, x="GrLivArea", y="Sale Price Predicted");
-#     fig1.update_traces(mode='lines');
-#     fig2 = go.Scatter(x=[gr_area], y=[pred_price]);
-#     fig2.update_traces(marker=dict(size=12, color = '#FF8833'));
-#     fig2.add_trace(go.Scatter(temp_house, x="GrLivArea", y="Sale Price Predicted"));
-    
-#     fig.add_trace(fig1);
-#     fig.add_trace(fig2);
-    fig = px.scatter(temp_house, x="GrLivArea", y="Sale Price Predicted");
-    fig.update_traces(mode='lines');
+    fig = px.line(temp_house, x="GrLivArea", y="Sale Price Predicted");
     fig.add_trace(go.Scatter(x=[gr_area], y=[pred_price]));
     fig.update_traces(marker=dict(size=12, color = '#FF8833'));
+    fig.update_layout(showlegend=False);
     return fig;
 
 
