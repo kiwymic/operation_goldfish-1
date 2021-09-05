@@ -127,6 +127,7 @@ method_dict = {
 
 back_end = front_to_back(front_end, "svrl");
 print(svrl.score(back_end, y_std));
+print(back_end.shape)
 
 ##########################
 # Constants, though much more should be defined...
