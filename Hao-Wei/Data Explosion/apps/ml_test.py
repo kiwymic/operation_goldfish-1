@@ -16,8 +16,23 @@ from app import server
 
 ## Machine learning toolkits
 from catboost import CatBoostRegressor;
-from sklearn.preprocessing import LabelEncoder;
+from sklearn.preprocessing import LabelEncoder, StandardScaler;
 from sklearn.linear_model import LinearRegression;
+from sklearn.svm import SVR;
+
+
+# The housing data
+housing_address = pd.read_csv('./data/house_coordinates_address.csv', index_col = 0);
+housing = pd.read_csv('./data/ames_housing_price_data_v6.csv', index_col = 0);
+front_end = housing;
+y = front_end["SalePrice"];
+
+# Some first step preprocessing.
+svr_backend_scaler = StandardScaler();
+svr_price_scaler = StandardScaler();
+standardized = False;
+svr_price_scaler.fit(np.array(np.log10(y)).reshape(-1,1));
+y_std = svr_price_scaler.transform(np.array(np.log10(y)).reshape(-1,1));
 
 # Utility functions which sends from front end to back end
 def front_to_back(fe, method = "cat"):
@@ -29,8 +44,11 @@ def front_to_back(fe, method = "cat"):
     fe: The frontend dataframe. Columns must be the same as those in version 6 of the housing data.
     method: The string which describes the regressor. Default = cat.
     Compatible values: "cat": CatBoostRegressor; "lm": Multilinear method (with lasso penalization)
+    "svrl": Support vector regressor with linear kernel
     Output: The backend dataframe. Should be ready to "regressor.fit()".
     '''
+    global standardized;
+
     be = fe.copy();
 
     if method == "cat":
@@ -40,7 +58,7 @@ def front_to_back(fe, method = "cat"):
         be=be.drop(["SalePrice", 'ExterQual','OverallCond','KitchenQual'],axis=1);
 
         be = dummify(be, non_dummies, dummies);
-    elif method == "lm":
+    elif method in ["lm", "svrl"]:
         be.drop(columns = ['SalePrice'], axis =1, inplace = True);
         be['GrLivArea_log'] = np.log10(be['GrLivArea']);
         be['LotArea_log'] = np.log10(be['LotArea']);
@@ -54,6 +72,13 @@ def front_to_back(fe, method = "cat"):
         be.drop(['BSMT_HighQual', 'BSMT_LowQual', 'GrLivArea', 'LotArea'], axis = 1, inplace = True);
 
         be = dummify(be, non_dummies_linear, dummies_linear);
+
+        if method == "svrl":
+            if not standardized:
+                be = pd.DataFrame(svr_backend_scaler.fit_transform(be), columns = be.columns);
+                standardized = True;
+            else:
+                be = pd.DataFrame(svr_backend_scaler.transform(be), columns = be.columns);
     return be;
 
 def predict_from_front(fe, method = "cat"):
@@ -67,20 +92,14 @@ def predict_from_front(fe, method = "cat"):
     '''
     if method_dict[method]["Scale"] == "lin":
         return method_dict[method]["Regressor"].predict(front_to_back(fe, method));
-    else: # The method is log scaled. Needs an exponentiation
+    elif method_dict[method]["Scale"] == "log": # The method is log scaled. Needs an exponentiation
         return 10 ** method_dict[method]["Regressor"].predict(front_to_back(fe, method));
+    else: # The method is log scaled then standardized.
+        return 10 ** (svr_price_scaler.inverse_transform\
+        (method_dict[method]["Regressor"].predict(front_to_back(fe, method))));
     return;
 
-housing_address = pd.read_csv('./data/house_coordinates_address.csv', index_col = 0);
-housing = pd.read_csv('./data/ames_housing_price_data_v6.csv', index_col = 0);
-front_end = housing;
-y = front_end["SalePrice"];
-
-# Loading Mo's frontend to backend code.
-#transformation of front-end to back-end, and catboost application
-
-back_end = front_to_back(front_end, "lm");
-
+##########################
 # The zoo of regressors...
 cat = CatBoostRegressor();
 cat.load_model("./data/HousePriceCatBoost", "cbm");
@@ -88,21 +107,37 @@ cat.load_model("./data/HousePriceCatBoost", "cbm");
 with open('./data/linearmodel.pickle', mode = 'rb') as file:
     lm = pickle.load(file);
 
+with open('./data/SVR_model.pickle', mode = 'rb') as file:
+    svrl = pickle.load(file);
+
 method_dict = {
     "cat": {"Scale": "lin", "Order": False, "Regressor": cat,
             "Altered": ['Neighborhood', 'BldgType', 'MasVnrType', 'ExterQual','OverallCond','KitchenQual']},
     "lm": {"Scale": "log", "Order": True, "Regressor": lm,
             "Altered": ['Neighborhood', 'BldgType', 'MasVnrType', 'BSMT_HighQual', 'BSMT_LowQual',
+            'ExterQual','OverallCond','KitchenQual', 'GrLivArea', 'LotArea']},
+    "svrl":{"Scale": "fitlog", "Order": True, "Regressor": svrl,
+            "Altered": ['Neighborhood', 'BldgType', 'MasVnrType', 'BSMT_HighQual', 'BSMT_LowQual',
             'ExterQual','OverallCond','KitchenQual', 'GrLivArea', 'LotArea']}
 };
-##########################
 
-print(lm.score(back_end, np.log10(y)));
+# Testing area for the latest machine learning model.
+#transformation of front-end to back-end
+#back_end = front_to_back(front_end, "svrl");
+
+back_end = front_to_back(front_end, "svrl");
+print(svrl.score(back_end, y_std));
+
+##########################
+# Constants, though much more should be defined...
 
 # These are the columns to be displayed in a standard DataTable.
 display_columns = {"Sale Price Price":"SalePrice", "Ground Living Area":"GrLivArea", "Quality (1-8)": "Quality",\
                   "# of Bedrooms": "BedroomAbvGr", "# of Bathrooms": "FullBath", "Neighborhood": "Neighborhood"};
 PAGE_SIZE = 10;
+
+#########################
+# The interface
 
 layout = html.Div([
 
@@ -143,8 +178,8 @@ layout = html.Div([
             options=[
                 {'label': 'CatBoost', 'value': 'check_cat'},
                 {'label': 'Linear', 'value': 'check_lm'},
-                {'label': 'Linear SVR', 'value': 'check_svr'}],
-            value=['check_cat', 'check_lm'],
+                {'label': 'Linear SVR', 'value': 'check_svrl'}],
+            value=['check_cat', 'check_lm', 'check_svrl'],
             labelStyle={'display': 'inline-block'},
             className='text-center'),
             html.Hr(),
@@ -328,8 +363,8 @@ def flipping_chart(PID, major, minor=None, estimator = ["cat"]):
         if not minor:
             fig.update_layout(showlegend=False);
 
-    fig.update_layout(legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01,\
-    font=dict(size=9), bgcolor='rgba(0,0,0,0)'));
+    fig.update_layout(legend=dict(yanchor="bottom", y=0.01, xanchor="right", x=0.99,\
+    font=dict(size=8), bgcolor='rgba(0,0,0,0)'));
     fig.update_xaxes(title_text=column_title_dict[major]["Description"]);
     fig.update_yaxes(title_text="Sales Price Predicted");
     return fig;
@@ -345,7 +380,6 @@ def update_flip_chart(clickData, major, minor, methods):
     if not clickData or not major: return px.scatter();
 
     methods = [x[6:] for x in methods];
-    print(methods)
     PID = clickData['points'][0]['hovertext'];
     return flipping_chart(PID, major, minor, methods);
 
