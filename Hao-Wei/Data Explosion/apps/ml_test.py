@@ -155,12 +155,11 @@ method_dict = {
 };
 
 # Testing area for the latest machine learning model.
-#transformation of front-end to back-end
+#transformation of front-end to back-end.
 #back_end = front_to_back(front_end, "svrl");
 
 back_end = front_to_back(front_end, "svrg");
 print(svrg.score(back_end, y_std));
-print(svrl.get_params())
 
 ##########################
 # Constants, though much more should be defined...
