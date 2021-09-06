@@ -34,14 +34,30 @@ from apps import maps, data_frame, app1, filters, table_test, ml_test
 # from data import loading_stuff
 
 
+df = pd.read_csv('./data/ames_housing_price_data_final.csv')
+params = df.columns
+df = df[df['PID'] == 909176150]
+df_current = df.T.reset_index()
+df_current.columns = ['Features', 'Current']
+sale_price = df_current.loc[1, "Current"]#.values[0]
+address = df_current.loc[2, "Current"]
+droprows = [0, 1, 2, 12, 13, 14, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
+df_current = df_current.drop(droprows, axis =0)
+df_future = df_current.copy()
+df_future.columns = ['Features', 'CompEdit']
+
+
+
+
 housing_basic = pd.read_csv('./data/basic_housing.csv')
 
 dropdown = dbc.DropdownMenu(
     children=[
         dbc.DropdownMenuItem("Home", href="/index"),
         dbc.DropdownMenuItem("Maps", href="/maps"),
+        dbc.DropdownMenuItem("Planning", href="/table_test"),
         dbc.DropdownMenuItem("Machine Learning", href="/ml_test"),
-        dbc.DropdownMenuItem("Table", href="/table_test"),
+
     ],
     nav = True,
     in_navbar = True,
@@ -196,15 +212,15 @@ def update_output(prices, sqfts, bathrms, bedrms):
                         (housing_basic['BedroomAbvGr'] <= bedrms[1])].to_dict('records')
 
 
-@app.callback(
-    Output('computed-table', 'data'),
-    Input('daq_bath_full', 'value'),
-    Input('daq_bedroom', 'value')
-)
-def display_output(value1, value2):
-    df_future.at[5, 'CompEdit'] = value1
-    df_future.at[6, 'CompEdit'] = value2
-    return df_future.to_dict('records')
+# @app.callback(
+#     Output('computed-table', 'data'),
+#     Input('daq_bath_full', 'value'),
+#     Input('daq_bedroom', 'value')
+# )
+# def display_output(value1, value2):
+#     df_future.at[5, 'CompEdit'] = value1
+#     df_future.at[6, 'CompEdit'] = value2
+#     return df_future.to_dict('records')
 
 
 ##### Pass a list of PID to the second page. I really think this chunk of code should in the map page.
@@ -227,6 +243,53 @@ def update_output(prices, sqfts, bathrms, bedrms):
                 ['PID']);
     print(foo);
     return {"PID": foo};
+
+
+
+@app.callback(
+    Output('computed-table', 'data'),
+    Input('future_sqft', 'value'),
+    Input('future_basement', 'value'),
+    Input('future_porch', 'value'),
+    Input('future_bedroom', 'value'),
+    Input('future_bath_full', 'value'),
+    Input('future_bath_half', 'value'),
+    Input('future_fireplaces', 'value'),
+    Input('future_garage', 'value'),
+    Input('pool_switch', 'value'),
+    Input('future-veneer', 'value'),
+    Input('future_overall_q', 'value'),
+    Input('future_overall_cond', 'value'),
+    Input('future_kitchen_q', 'value'),
+    Input('future_exterior_q', 'value')
+)
+def update_output(sqft_value, basement_value, porch_value, bed_value,
+                   bath_full_value, bath_half_value, fire_value, garage_value,
+                   pool_value, veneer_value, overall_value, cond_value,
+                  kitchen_value, exterior_value):
+    df_future.at[3, 'CompEdit'] = sqft_value
+    # df_real.at[0, GrLivArea] = sqft_value
+    df_future.at[17, 'CompEdit'] = basement_value
+    # df_future.at[6, 'CompEdit'] = basement_value - (df_current[17, 'CompEdit'] + df_current[6, 'CompEdit'])
+    df_future.at[16, 'CompEdit'] = porch_value
+    df_future.at[20, 'CompEdit'] = bed_value
+    df_future.at[10, 'CompEdit'] = bath_full_value
+    df_future.at[11, 'CompEdit'] = bath_half_value
+    df_future.at[18, 'CompEdit'] = fire_value
+    df_future.at[8, 'CompEdit'] = garage_value
+    if pool_value == True:
+        df_future.at[19, 'CompEdit'] = 1
+    if pool_value == False:
+        df_future.at[19, 'CompEdit'] = 0
+    df_future.at[9, 'CompEdit'] = veneer_value
+    df_future.at[5, 'CompEdit'] = overall_value
+    df_future.at[22, 'CompEdit'] = cond_value
+    df_future.at[23, 'CompEdit'] = kitchen_value
+    df_future.at[21, 'CompEdit'] = exterior_value
+
+    return df_future.to_dict('records')
+
+
 
 # def update_output(prices, sqfts, bathrms, bedrms):
 #     foo = list(maps.housing_basic[(maps.housing_basic['SalePrice'] > prices[0]) &

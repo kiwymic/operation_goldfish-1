@@ -12,7 +12,6 @@ import dash_bootstrap_components as dbc
 df = pd.read_csv('./data/ames_housing_price_data_final.csv')
 params = df.columns
 df = df[df['PID'] == 909176150]
-
 df_current = df.T.reset_index()
 df_current.columns = ['Features', 'Current']
 sale_price = df_current.loc[1, "Current"]#.values[0]
@@ -70,8 +69,9 @@ layout = html.Div([
                     step=10,
                     marks={
                         00: '0',
-                        1250: '1250',
+                        1250: '1,250',
                         2500: '2,500',
+                        3750: '3,750',
                         5000: '5,000',
                     },
                     value= df_current.at[3, 'Current']   ########## NEED TO FIND ROW FOR IT
@@ -98,14 +98,18 @@ layout = html.Div([
                        className='text-center text-primary, mb-1, medium'),
                 dcc.Slider(
                     id='future_porch',
-                    min=300,
+                    min=000,
                     max=1250,
                     step=10,
                     marks={
                         0: '0',
-                        1250: '1250',
+                        250: '250',
+                        500: '500',
+                        750: '750',
+                        1000: '1,000',
+                        1250: '1,250',
                     },
-                    value=100  ###df_current.at[5, 'Current']   ########## NEED TO FIND ROW FOR IT
+                    value= df_current.at[16, 'Current']
                 ),
 
 ########## QUALITY SLIDERS
@@ -114,15 +118,59 @@ layout = html.Div([
                 dcc.Slider(
                     id='future_overall_q',
                     min=0,
-                    max=100,
-                    step=1,
+                    max=1,
+                    step=.1,
                     marks={
                         0: '0',
-                        50: '50',
-                        100: '100'
+                        .5: '.5',
+                        1: '1'
                     },
-                    value=50  ###df_current.at[5, 'Current']   ########## NEED TO FIND ROW FOR IT
+                    value= df_current.at[5, 'Current']
                 ),
+                html.P('Overall Condition',
+                       className='text-center text-primary, mb-1, medium'),
+                dcc.Slider(
+                    id='future_overall_cond',
+                    min=0,
+                    max=1,
+                    step=.1,
+                    marks={
+                        0: '0',
+                        .5: '.5',
+                        1: '1'
+                    },
+                    value=df_current.at[22, 'Current']
+                ),
+                html.P('Kitchen Quality',
+                       className='text-center text-primary, mb-1, medium'),
+                dcc.Slider(
+                    id='future_kitchen_q',
+                    min=0,
+                    max=1,
+                    step=.1,
+                    marks={
+                        0: '0',
+                        .5: '.5',
+                        1: '1'
+                    },
+                    value=df_current.at[23, 'Current']
+                ),
+                html.P('Exterior Quality',
+                       className='text-center text-primary, mb-1, medium'),
+                dcc.Slider(
+                    id='future_exterior_q',
+                    min=0,
+                    max=1,
+                    step=.1,
+                    marks={
+                        0: '0',
+                        .5: '.5',
+                        1: '1'
+                    },
+                    value=df_current.at[21, 'Current']
+                ),
+
+
 
 ###### NUMERIC INPUTS
 
@@ -131,7 +179,7 @@ layout = html.Div([
                     id='future_bedroom',
                     min=0,
                     max=6,
-                    value=df_current.at[6, 'Current'],
+                    value=df_current.at[20, 'Current'],
                     label='Bedrooms',
                     labelPosition='top',
                 ),
@@ -140,7 +188,7 @@ layout = html.Div([
                     id='future_bath_full',
                     min=1,
                     max=4,
-                    value=df_current.at[5, 'Current'],
+                    value=df_current.at[10, 'Current'],
                     label = 'Bathrooms - Full',
                     labelPosition = 'top',
                 ),
@@ -149,7 +197,7 @@ layout = html.Div([
                     id='future_bath_half',
                     min=0,
                     max=2,
-                    value= 1,  ###df_current.at[5, 'Current'],
+                    value= df_current.at[11, 'Current'],
                     label = 'Bathrooms - Half',
                     labelPosition = 'top',
                 ),
@@ -158,7 +206,7 @@ layout = html.Div([
                     id='future_fireplaces',
                     min=0,
                     max=4,
-                    value= 1, ### df_current.at[5, 'Current'],
+                    value= df_current.at[18, 'Current'],
                     label = 'Fireplaces',
                     labelPosition = 'top',
                 ),
@@ -167,7 +215,7 @@ layout = html.Div([
                     id='future_garage',
                     min=0,
                     max=5,
-                    value= 1, ### df_current.at[5, 'Current'],
+                    value= df_current.at[8, 'Current'],
                     label = 'Garage - Cars',
                     labelPosition = 'top',
                 ),
@@ -175,7 +223,7 @@ layout = html.Div([
 ##### Pool - boolean
                 daq.BooleanSwitch(
                     id="pool_switch",
-                    on=False,
+                    # on=False,
                     color="#9B51E0",
                     label="Pool",
                     labelPosition="top"
@@ -184,11 +232,11 @@ layout = html.Div([
                 dcc.Dropdown(
                         id='future-veneer',
                         options=[
-                            {'label': 'New York City', 'value': 'NYC'},
-                            {'label': 'Montreal', 'value': 'MTL'},
-                            {'label': 'San Francisco', 'value': 'SF'}
+                            {'label': 'None', 'value': 'None'},
+                            {'label': 'Brick Face', 'value': 'Brick Face'},
+                            {'label': 'Stone', 'value': 'Stone'}
                         ],
-                        value='NYC'
+                        value= df_current.at[9, 'Current']
                     )
 
 
@@ -222,36 +270,36 @@ layout = html.Div([
         ])
 ])
 
-
-@app.callback(
-    Output('computed-table', 'data'),
-    Input('future_sqft', 'value'),
-    Input('future_basement', 'value'),
-    Input('future_porch', 'value'),
-    # Input('future_overall_q', 'value'),
-    Input('future_bedroom', 'value'),
-    Input('future_bath_full', 'value'),
-    Input('future_bath_half', 'value'),
-    Input('future_fireplaces', 'value'),
-    Input('future_garage', 'value'),
-    Input('pool_switch', 'value'),
-    Input('future-veneer', 'value')
-)
-def display_output(sqft_value, basement_value, porch_value, bed_value,
-                   bath_full_value, bath_half_value, fire_value, garage_value,
-                   pool_value, veneer_value):
-    df_future.at[3, 'CompEdit'] = sqft_value
-    df_future.at[17, 'CompEdit'] = basement_value
-    df_future.at[6, 'CompEdit'] = basement_value - (df_current[17, 'CompEdit'] + df_current[6, 'CompEdit'])
-    df_future.at[16, 'CompEdit'] = porch_value
-    df_future.at[20, 'CompEdit'] = bed_value
-    df_future.at[3, 'CompEdit'] = bath_full_value
-    df_future.at[11, 'CompEdit'] = bath_half_value
-    df_future.at[18, 'CompEdit'] = fire_value
-    df_future.at[8, 'CompEdit'] = garage_value
-    df_future.at[19, 'CompEdit'] = pool_value
-    df_future.at[9, 'CompEdit'] = veneer_value
-    return df_future.to_dict('records')
+#
+# @app.callback(
+#     Output('computed-table', 'data'),
+#     Input('future_sqft', 'value'),
+#     Input('future_basement', 'value'),
+#     Input('future_porch', 'value'),
+#     # Input('future_overall_q', 'value'),
+#     Input('future_bedroom', 'value'),
+#     Input('future_bath_full', 'value'),
+#     Input('future_bath_half', 'value'),
+#     Input('future_fireplaces', 'value'),
+#     Input('future_garage', 'value'),
+#     Input('pool_switch', 'value'),
+#     Input('future-veneer', 'value')
+# )
+# def display_output(sqft_value, basement_value, porch_value, bed_value,
+#                    bath_full_value, bath_half_value, fire_value, garage_value,
+#                    pool_value, veneer_value):
+#     df_future.at[3, 'CompEdit'] = sqft_value
+#     df_future.at[17, 'CompEdit'] = basement_value
+#     df_future.at[6, 'CompEdit'] = basement_value - (df_current[17, 'CompEdit'] + df_current[6, 'CompEdit'])
+#     df_future.at[16, 'CompEdit'] = porch_value
+#     df_future.at[20, 'CompEdit'] = bed_value
+#     df_future.at[3, 'CompEdit'] = bath_full_value
+#     df_future.at[11, 'CompEdit'] = bath_half_value
+#     df_future.at[18, 'CompEdit'] = fire_value
+#     df_future.at[8, 'CompEdit'] = garage_value
+#     df_future.at[19, 'CompEdit'] = pool_value
+#     df_future.at[9, 'CompEdit'] = veneer_value
+#     return df_future.to_dict('records')
 
 
 if __name__ == '__main__':
