@@ -30,7 +30,7 @@ import geobuf
 
 from app import app
 from app import server
-from apps import maps, data_frame, app1, filters # ml_test
+from apps import maps, data_frame, app1, filters, table_test # ml_test
 # from data import loading_stuff
 
 
@@ -41,6 +41,7 @@ dropdown = dbc.DropdownMenu(
         dbc.DropdownMenuItem("Home", href="/index"),
         dbc.DropdownMenuItem("Maps", href="/maps"),
         dbc.DropdownMenuItem("Machine Learning", href="/app1"),
+        dbc.DropdownMenuItem("Table", href="/table_test"),
     ],
     nav = True,
     in_navbar = True,
@@ -95,7 +96,7 @@ app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     navbar,
     html.Div(id='page-content'),
-    html.Div(data_frame.layout)
+    # html.Div(data_frame.layout)
 ])
 
 # @app.callback(Output('table', 'style_data_conditional'),
@@ -131,8 +132,8 @@ def display_page(pathname):
         return maps.layout
     elif pathname == '/plans':
         return plans.layout
-    elif pathname == '/app1':
-        return app1.layout
+    elif pathname == '/table_test':
+        return table_test.layout
     else:
         return maps.layout
 
@@ -193,6 +194,15 @@ def update_output(prices, sqfts, bathrms, bedrms):
                         (housing_basic['BedroomAbvGr'] <= bedrms[1])].to_dict('records')
 
 
+@app.callback(
+    Output('computed-table', 'data'),
+    Input('daq_bath_full', 'value'),
+    Input('daq_bedroom', 'value')
+)
+def display_output(value1, value2):
+    df_future.at[5, 'CompEdit'] = value1
+    df_future.at[6, 'CompEdit'] = value2
+    return df_future.to_dict('records')
 
 
 # def update_output(prices, sqfts, bathrms, bedrms):

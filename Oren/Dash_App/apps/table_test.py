@@ -18,10 +18,13 @@ df_current.columns = ['Features', 'Current']
 df_future = df_current.copy()
 df_future.columns = ['Features', 'CompEdit']
 
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI],
+                meta_tags=[{'name': 'viewport',
+                            'content': 'width=device-width, initial-scale=1.0'}]
+                )
 
-app = dash.Dash(__name__)
 
-app.layout = html.Div([
+layout = html.Div([
     dbc.Container([
         dbc.Row([
             dbc.Col(children=[html.H3("Current House",
@@ -41,36 +44,140 @@ app.layout = html.Div([
                                         ],
                                   fill_width=False
                               )],
-                width={"size": 2}
+                width={"size": 3}
             ),
-#### This adds a boolean opperator
+
             dbc.Col(children=[
-                daq.BooleanSwitch(
-                    id= "boolean_switch",
-                    on=True,
-                    color="#9B51E0",
-                    label="Finished Basement",
-                    labelPosition="top"
+
+#### Square Footage slider
+                html.P('General Living Area Square Footage',
+                       className='text-center text-primary, mb-1, medium'),
+                dcc.Slider(
+                    id='future_sqft',
+                    min=000,
+                    max=5000,
+                    step=10,
+                    marks={
+                        00: '0',
+                        1250: '1250',
+                        2500: '2,500',
+                        5000: '5,000',
+                    },
+                    value= 1000  ###df_current.at[5, 'Current']   ########## NEED TO FIND ROW FOR IT
+                ),
+#### Basement Slider
+                html.P('Finished Basement Square Footage',
+                       className='text-center text-primary, mb-1, medium'),
+                dcc.Slider(
+                    id='future_basement',
+                    min=0,
+                    max=2000,  #### create max by adding low and high quality
+                    step=10,
+                    marks={
+                        0: '0',
+                        1250: '1250',
+                        2500: '2,500',
+                        5000: '5,000',
+                    },
+                    value=1000  ###df_current.at[5, 'Current']   ########## NEED TO FIND ROW FOR IT
+                ),
+#### Porch Slider
+                dcc.Slider(
+                    id='future_porch',
+                    min=300,
+                    max=1250,
+                    step=10,
+                    marks={
+                        0: '0',
+                        1250: '1250',
+                    },
+                    value=100  ###df_current.at[5, 'Current']   ########## NEED TO FIND ROW FOR IT
                 ),
 
-                daq.NumericInput(
-                    id='daq_bath_full',
+########## QUALITY SLIDERS
+                dcc.Slider(
+                    id='future_overall_q',
                     min=0,
-                    max=10,
-                    value=df_current.at[5, 'Current'],
-                    label = 'Bathrooms - Full',
-                    labelPosition = 'bottom',
+                    max=100,
+                    step=1,
+                    marks={
+                        0: '0',
+                        50: '50',
+                        100: '100'
+                    },
+                    value=50  ###df_current.at[5, 'Current']   ########## NEED TO FIND ROW FOR IT
                 ),
+
+###### NUMERIC INPUTS
+
+#######Bedroom
                 daq.NumericInput(
-                    id='daq_bedroom',
+                    id='future_bedroom',
                     min=0,
-                    max=10,
+                    max=6,
                     value=df_current.at[6, 'Current'],
                     label='Bedrooms',
-                    labelPosition='bottom',
-                )
+                    labelPosition='top',
+                ),
+####### Bathroom - full
+                daq.NumericInput(
+                    id='future_bath_full',
+                    min=1,
+                    max=4,
+                    value=df_current.at[5, 'Current'],
+                    label = 'Bathrooms - Full',
+                    labelPosition = 'top',
+                ),
+####### Bathroom - half
+                daq.NumericInput(
+                    id='future_bath_half',
+                    min=0,
+                    max=2,
+                    value= 1,  ###df_current.at[5, 'Current'],
+                    label = 'Bathrooms - Half',
+                    labelPosition = 'top',
+                ),
+####### Fireplaces
+                daq.NumericInput(
+                    id='future_fireplaces',
+                    min=0,
+                    max=4,
+                    value= 1, ### df_current.at[5, 'Current'],
+                    label = 'Fireplaces',
+                    labelPosition = 'top',
+                ),
+####### Garage
+                daq.NumericInput(
+                    id='future_garage',
+                    min=0,
+                    max=5,
+                    value= 1, ### df_current.at[5, 'Current'],
+                    label = 'Garage - Cars',
+                    labelPosition = 'top',
+                ),
+
+##### Pool - boolean
+                daq.BooleanSwitch(
+                    id="pool_switch",
+                    on=False,
+                    color="#9B51E0",
+                    label="Pool",
+                    labelPosition="top"
+                ),
+####### Dropdown for masonry veneer
+                dcc.Dropdown(
+                        id='future-veneer',
+                        options=[
+                            {'label': 'New York City', 'value': 'NYC'},
+                            {'label': 'Montreal', 'value': 'MTL'},
+                            {'label': 'San Francisco', 'value': 'SF'}
+                        ],
+                        value='NYC'
+                    )
+
+
             ],
-                width={"size": 2}
+                width={"size": 6}
             ),
 
             dbc.Col(children=[
@@ -90,7 +197,7 @@ app.layout = html.Div([
                                   fill_width=False
                 )
                 ],
-                width={"size": 2}
+                width={"size": 3}
             )
             ])
         ])

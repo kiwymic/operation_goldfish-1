@@ -107,7 +107,7 @@ dbc.Col([
             dcc.RangeSlider(
                 id='sqft',
                 min=0,
-                max=2500,
+                max=5000,
                 step=10,
                 marks={
                     0: '0',
