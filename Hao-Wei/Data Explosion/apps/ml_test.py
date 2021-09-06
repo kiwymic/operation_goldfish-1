@@ -22,9 +22,10 @@ from sklearn.svm import SVR;
 
 
 # The housing data
-housing_address = pd.read_csv('./data/house_coordinates_address.csv', index_col = 0);
-housing = pd.read_csv('./data/ames_housing_price_data_v6.csv', index_col = 0);
-front_end = housing;
+# housing_address = pd.read_csv('./data/house_coordinates_address.csv', index_col = 0);
+# housing = pd.read_csv('./data/ames_housing_price_data_v6.csv', index_col = 0);
+housing = pd.read_csv('./data/ames_housing_price_data_final.csv', index_col = 0);
+front_end = housing.drop(["Address", "price_score"], axis = 1);
 y = front_end["SalePrice"];
 
 # Some first step preprocessing.
@@ -165,7 +166,7 @@ print(svrg.score(back_end, y_std));
 # Constants, though much more should be defined...
 
 # These are the columns to be displayed in a standard DataTable.
-display_columns = {"Sale Price Price":"SalePrice", "Ground Living Area":"GrLivArea", "Quality (1-8)": "Quality",\
+display_columns = {"Address": "Address", "Sale Price Price":"SalePrice", "Ground Living Area":"GrLivArea", "Quality (1-8)": "Quality",\
                   "# of Bedrooms": "BedroomAbvGr", "# of Bathrooms": "FullBath", "Neighborhood": "Neighborhood"};
 PAGE_SIZE = 10;
 
@@ -284,7 +285,7 @@ def test_graph_data_pid(value, show_all, page_current, page_size):
         page_current*page_size:(page_current+ 1)*page_size];
 
     fig = px.scatter(temp_house, x="GrLivArea", y="SalePrice",
-                 size="Quality", color="Neighborhood", hover_name= "PID",
+                 size="Quality", color="Neighborhood", hover_name= "Address",
                  size_max=10);
     return fig;
 
@@ -312,10 +313,12 @@ def update_table(pid_data, page_current,page_size):
     Input('pid_scatter', 'clickData'))
 def update_selected_on_click(clickData):
     if not clickData: return "Looking for your dream home?";
-    temp = housing_address.reset_index();
-    temp = temp[temp["PID"] == clickData['points'][0]['hovertext']]
-    # temp["Address"] = temp["Address"].apply(lambda x: x[:-17]); # ", Ames, Iowa, USA"
-    address = temp[temp["PID"] == clickData['points'][0]['hovertext']]["Address"];
+    address = clickData['points'][0]['hovertext'];
+    # temp = housing;
+    # temp = temp.reset_index();
+    # temp = temp[temp["A"] == clickData['points'][0]['hovertext']]
+    # # temp["Address"] = temp["Address"].apply(lambda x: x[:-17]); # ", Ames, Iowa, USA"
+    # address = temp[temp["PID"] == clickData['points'][0]['hovertext']]["Address"];
     return "Your selection: " + address;
 #     return clickData['points'][0]['hovertext'];
 
@@ -413,8 +416,12 @@ def flipping_chart(PID, major, minor=None, estimator = ["cat"]):
 def update_flip_chart(clickData, major, minor, methods):
     if not clickData or not major: return px.scatter();
 
+    temp = housing;
     methods = [x[6:] for x in methods];
-    PID = clickData['points'][0]['hovertext'];
+    address = clickData['points'][0]['hovertext'];
+    if "PID" not in temp.columns: temp.reset_index(inplace = True);
+    PID = int(temp[temp["Address"]==address]["PID"]);
+    print(PID);
     return flipping_chart(PID, major, minor, methods);
 
 @app.callback(
@@ -426,8 +433,11 @@ def update_flip_chart(clickData, major, minor, methods):
 def update_explore_chart(clickData, major, minor, methods):
     if not clickData or not major: return px.scatter();
 
+    temp = housing;
     methods = [x[6:] for x in methods];
-    PID = clickData['points'][0]['hovertext'];
+    address = clickData['points'][0]['hovertext'];
+    if "PID" not in temp.columns: temp.reset_index(inplace = True);
+    PID = int(temp[temp["Address"]==address]["PID"]);
     return flipping_chart(PID, major, minor, methods);
 
 
