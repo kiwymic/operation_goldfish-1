@@ -30,7 +30,7 @@ import geobuf
 
 from app import app
 from app import server
-from apps import maps, data_frame, app1, filters, table_test # ml_test
+from apps import maps, data_frame, app1, filters, table_test, ml_test
 # from data import loading_stuff
 
 
@@ -40,7 +40,7 @@ dropdown = dbc.DropdownMenu(
     children=[
         dbc.DropdownMenuItem("Home", href="/index"),
         dbc.DropdownMenuItem("Maps", href="/maps"),
-        dbc.DropdownMenuItem("Machine Learning", href="/app1"),
+        dbc.DropdownMenuItem("Machine Learning", href="/ml_test"),
         dbc.DropdownMenuItem("Table", href="/table_test"),
     ],
     nav = True,
@@ -97,6 +97,8 @@ app.layout = html.Div([
     navbar,
     html.Div(id='page-content'),
     # html.Div(data_frame.layout)
+
+    dcc.Store(id = 'data_pid', storage_type = 'session')
 ])
 
 # @app.callback(Output('table', 'style_data_conditional'),
@@ -130,8 +132,8 @@ def style_selected_rows(sel_rows):
 def display_page(pathname):
     if pathname == '/maps':
         return maps.layout
-    elif pathname == '/plans':
-        return plans.layout
+    elif pathname == '/ml_test':
+        return ml_test.layout
     elif pathname == '/table_test':
         return table_test.layout
     else:
@@ -204,6 +206,27 @@ def display_output(value1, value2):
     df_future.at[6, 'CompEdit'] = value2
     return df_future.to_dict('records')
 
+
+##### Pass a list of PID to the second page. I really think this chunk of code should in the map page.
+@app.callback(
+    Output("data_pid", "data"),
+    Input('price', 'value'),
+    Input('sqft', 'value'),
+    Input("input_bathrooms", "value"),
+    Input("input_bedrooms", "value")
+)
+def update_output(prices, sqfts, bathrms, bedrms):
+    foo = list(housing_basic[(housing_basic['SalePrice'] > prices[0]) &
+                        (housing_basic['SalePrice'] < prices[1]) &
+                        (housing_basic['GrLivArea'] > sqfts[0]) &
+                        (housing_basic['GrLivArea'] < sqfts[1]) &
+                        (housing_basic['FullBath'] >= bathrms[0]) &
+                        (housing_basic['FullBath'] <= bathrms[1]) &
+                        (housing_basic['BedroomAbvGr'] >= bedrms[0]) &
+                        (housing_basic['BedroomAbvGr'] <= bedrms[1])]
+                ['PID']);
+    print(foo);
+    return {"PID": foo};
 
 # def update_output(prices, sqfts, bathrms, bedrms):
 #     foo = list(maps.housing_basic[(maps.housing_basic['SalePrice'] > prices[0]) &

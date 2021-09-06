@@ -6,233 +6,172 @@ import dash_table as dt;
 import pandas as pd;
 import numpy as np;
 import plotly.express as px;
+import plotly.graph_objs as go;
+import pickle;
+
+from dictionaries import *;
 
 from app import app
 from app import server
 
 ## Machine learning toolkits
 from catboost import CatBoostRegressor;
-from sklearn.preprocessing import LabelEncoder;
+from sklearn.preprocessing import LabelEncoder, StandardScaler;
+from sklearn.linear_model import LinearRegression;
+from sklearn.svm import SVR;
 
 
-##### Load the housing data (and probably the pickle cat)
-housing = pd.read_csv('./data/ames_housing_price_data_v4.csv', index_col = 0);
-housing_coords = pd.read_csv('./data/house_coordinates_0.25.csv', index_col = 0);
-# test = housing.merge(housing_coords, how = "inner", left_index = True, right_index = True);
-# test = housing_coords.drop(["Address", "Coords4", "latitude", "longitude"], axis = 1);
-# test.sort_values("PID", ascending = True, inplace = True);
-# test2 = test.merge(housing["SalePrice"], left_index = True, right_index = True);
-x = housing;
+# The housing data
+# housing_address = pd.read_csv('./data/house_coordinates_address.csv', index_col = 0);
+# housing = pd.read_csv('./data/ames_housing_price_data_v6.csv', index_col = 0);
+housing = pd.read_csv('./data/ames_housing_price_data_final.csv', index_col = 0);
+front_end = housing.drop(["Address", "price_score"], axis = 1);
+y = front_end["SalePrice"];
 
-##### Preparation for gradient boosting, replace with Mo's code
-typedict = {#'PID' : 'nominal',
-            'SalePrice' : 'Continuous',
-            #Matt
-            'LotFrontage' : 'Continuous', 
-            'LotArea' : 'Continuous',
-            #'maybe_LotShape' : 'Nominal',
-            'LandSlope' : 'Nominal', 
-            'LandContour' : 'Nominal', 
-            #'maybe_MSZoning' : 'Nominal', 
-            'Street_paved' : 'Nominal', 
-            'Alley' : 'Nominal',
-            'Neighborhood' : 'Nominal', 
-            #'drop_LotConfig' : 'nominal', 
-            #'drop_Condition1' : 'nominal', 
-            #'drop_Condition2' : 'nominal',
-            'Foundation' : 'Nominal',
-            'Utilities' : 'Nominal',
-            #'Heating' : 'Nominal',
-            #'drop_HeatingQC_nom' : 'Ordinal',
-            'CentralAir' : 'Nominal',
-            #'drop_Electrical' : 'Nominal',
-            'HeatingQC_ord' : 'Ordinal',
-            'LotShape_com' : 'Nominal',
-            'MSZoning_com' : 'Nominal',
-            #'LF_Normal' : 'nominal',
-            'LF_Near_NS_RR' : 'Nominal',
-            'LF_Near_Positive_Feature' : 'Nominal',
-            'LF_Adjacent_Arterial_St' : 'Nominal',
-            'LF_Near_EW_RR' : 'Nominal',
-            'LF_Adjacent_Feeder_St' : 'Nominal',
-            #'LF_Near_Postive_Feature' : 'Nominal',
-            'Heating_com' : 'Nominal',
-            'Electrical_com' : 'Nominal',
-            'LotConfig_com' : 'Nominal', 
-            'LotFrontage_log' : 'Continuous',
-            'LotArea_log' : 'Continuous',
-            #Oren 
-            'MiscFeature': 'Nominal',
-            'Fireplaces': 'Discrete',
-            'FireplaceQu': 'Ordinal',
-            'PoolQC': 'Ordinal',
-            'PoolArea': 'Continuous',
-            'PavedDrive': 'Nominal',
-            'ExterQual': 'Ordinal',
-            'OverallQual': 'Ordinal',
-            'OverallCond': 'Ordinal',
-            'MiscVal': 'Continuous',
-            #'YearBuilt': 'Discrete',
-            #'YearRemodAdd': 'Discrete',
-            'KitchenQual': 'Ordinal',
-            'Fence': 'Ordinal',
-            'RoofStyle': 'Nominal',
-            'RoofMatl': 'Nominal',
-            #'maybe_Exterior1st': 'Nominal',
-            #'drop_Exterior2nd': 'Nominal',
-            'ExterCond': 'Ordinal',
-            'MasVnrType': 'Nominal',
-            'MasVnrArea': 'Continuous',
-            #Mo
-            #Basement
-            'BsmtQual_ord': 'Ordinal',
-            'BsmtCond_ord': 'Ordinal',
-            'BsmtExposure_ord': 'Ordinal',
-            #'BsmtQual_ord_lin': 'Ordinal',
-            #'BsmtCond_ord_lin': 'Ordinal',
-            #'BsmtExposure_ord_lin': 'Ordinal',
-            'TotalBsmtSF': 'Continuous',
-            'BSMT_GLQ':'Continuous', 
-            'BSMT_Rec':'Continuous',
-            'BsmtUnfSF': 'Continuous',
-            'BSMT_ALQ':'Continuous',
-            'BSMT_BLQ':'Continuous', 
-            'BSMT_LwQ':'Continuous', 
-            #'drop_BsmtQual': 'Nominal',
-            #'drop_BsmtCond': 'Nominal',
-            #'drop_BsmtExposure': 'Nominal',
-            #'drop_BsmtFinType1': 'Nominal',
-            #'drop_BsmtFinSF1': 'Continuous',
-            #'drop_BsmtFinType2': 'Nominal',
-            #'drop_BsmtFinSF2': 'Continuous',
-            #Deck
-            'WoodDeckSF':'Continuous', 
-            'OpenPorchSF':'Continuous', 
-            'ScreenPorch':'Continuous',
-            'EnclosedPorch':'Continuous',
-            '3SsnPorch':'Continuous',
-            #Garage
-            'GarageFinish':'Nominal', 
-            #'GarageYrBlt':'Continuous',
-            'GarageCars':'Ordinal',
-            'GarageArea':'Continuous',
-            'GarageType_com':'Nominal',
-            'GarageQual':'Nominal', 
-            'GarageCond':'Nominal',
-            #'drop_GarageType':'Nominal',
+# Some first step preprocessing.
+svr_backend_scaler = StandardScaler();
+svrg_backend_scaler = StandardScaler();
+svr_price_scaler = StandardScaler();
+standardized_l = False; # Whether the standard scalar of linear svr is fitted
+standardized_g = False; # Whether the standard scalar of Gaussian svr is fitted
 
-            # Hao-Wei
-            "SaleType": "Nominal",
-            "BldgType": "Nominal",
-            "Functional_ord": "Ordinal", # Changed from "Functional"
-            "1stFlrSF": "Continuous",
-            "2ndFlrSF": "Continuous",
-            "LowQualFinSF": "Continuous", # Rejectable p-value
-            "GrLivArea": "Continuous",
-            "BsmtFullBath": "Discrete",
-            "BsmtHalfBath": "Discrete", # Rejectable p-value
-            "FullBath": "Discrete",
-            "HalfBath": "Discrete",
-            "BedroomAbvGr": "Discrete",
-            "KitchenAbvGr": "Discrete",
-            "TotRmsAbvGrd": "Discrete",
-            "MoSold": "Discrete", # Rejectable p-value
-            "YrSold": "Discrete", # Rejectable p-value
-            ####### Below are columns created by myself #######
-            #"Functional_dis": "Discrete", # Functional in a (Salvage) 0-7 (Full) scale.
-            "1stFlrSF_log": "Continuous",
-            "2ndFlrSF_log": "Continuous",
-            "GrLivArea_log": "Continuous",
-            "number_floors": "Discrete",
-            "attic": "Ordinal",
-            "PUD": "Nominal",
-            #### Whose?
-            "SaleCondition": "Nominal",
-            "SalePrice_log": "Continuous",
-            #"drop_MS_Coded": "Nominal",
-            "sold_datetime": "Discrete",
-    
-            #### New in version 3:
-            'ext_Wood_Siding': "Discrete",
-            'ext_Hard_Board': "Discrete",
-            'ext_Metal_Siding': "Discrete",
-            'ext_Vinyl_Siding': "Discrete",
-            'ext_Wood_Shingles': "Discrete",
-            'ext_Plywood': "Discrete",
-            'ext_Stucco': "Discrete",
-            'ext_Cement_Board': "Discrete",
-            'ext_Face_Brick': "Discrete",
-            'ext_Asbestos_Shingles': "Discrete",
-            'ext_Common_Brick': "Discrete",
-            'ext_Imitation_Stucco': "Discrete",
-            'ext_Other': "Discrete",
-            #'sold_age_years': "Continuous"
-    
-            #### New in version 4
-            'Garage_age_years': "Continuous",
-            'Garage_age_bin': "Ordinal",
-            'house_age_years': "Continuous",
-            'Remod_age_years': "Continuous",
-            'Remod_age_bin': "Ordinal"
-}
+svr_price_scaler.fit(np.array(np.log10(y)).reshape(-1,1));
+y_std = svr_price_scaler.transform(np.array(np.log10(y)).reshape(-1,1));
 
-attic_dict = {"No attic": 0, "Finished": 2, "Unfinished": 1};
-fence_dict = {"No Fence": 0, "Minimum Privacy": 3, "Good Privacy": 4, "Good Wood": 2 , "Minimum Wood/Wire": 1};
-Garage_age_bin_dict = {"No garage":0, "60+": 1, "40-60": 2, "20-40": 3, "0-20":4};
-Remod_age_bin_dict = {"No remodel": 0, "45+": 1, "30-45": 2, "15-30": 3, "0-15":4};
+# Utility functions which sends from front end to back end
+def front_to_back(fe, method = "cat"):
+    '''
+    Description:
+    This is the function which construct the backend data (which directly feeds to CatBoostRegressor)
+    given the frontend data.
+    Input:
+    fe: The frontend dataframe. Columns must be the same as those in version 6 of the housing data.
+    method: The string which describes the regressor. Default = cat.
+    Compatible values: "cat": CatBoostRegressor; "lm": Multilinear method (with lasso penalization)
+    "svrl": Support vector regressor with linear kernel
+    Output: The backend dataframe. Should be ready to "regressor.fit()".
+    '''
+    global standardized_l;
+    global standardized_g;
 
-x.drop("sold_datetime", axis = 1, inplace = True);
-x["Months_Elapsed"] = 12*(x["YrSold"]-2006) + x["MoSold"];
-x["attic"] = x.apply(lambda t: attic_dict[t["attic"]], axis = 1);
-x["Fence"] = x.apply(lambda t: fence_dict[t["Fence"]], axis = 1);
+    be = fe.copy();
 
-x["Garage_age_bin"] = x.apply(lambda t: Garage_age_bin_dict[t["Garage_age_bin"]], axis = 1);
-x["Remod_age_bin"] = x.apply(lambda t: Remod_age_bin_dict[t["Remod_age_bin"]], axis = 1);
+    if method == "cat":
+        be['ExterQualDisc']=be['ExterQual']-be['OverallQual'];
+        be['OverallCondDisc']=be['OverallCond']-be['OverallQual'];
+        be['KitchenQualDisc']=be['KitchenQual']-be['OverallQual'];
+        be=be.drop(["SalePrice", 'ExterQual','OverallCond','KitchenQual'],axis=1);
 
-typedict["Months_Elapsed"] = "Discrete";
+        be = dummify(be, non_dummies, dummies);
+    elif method in ["lm", "svrl"]:
+        be.drop(columns = ['SalePrice'], axis =1, inplace = True);
+        be['GrLivArea_log'] = np.log10(be['GrLivArea']);
+        be['LotArea_log'] = np.log10(be['LotArea']);
+        be['ExterQualDisc'] = be['ExterQual'] - be['OverallQual'];
+        be['OverallCondDisc'] = be['OverallCond'] - be['OverallQual'];
+        be['KitchenQualDisc'] = be['KitchenQual'] - be['OverallQual'];
+        be = be.drop(['ExterQual','OverallCond','KitchenQual'], axis=1);
 
-col_num = [w for w in x.columns if typedict[w] in ["Continuous", "Discrete", "Ordinal"]];
-col_nom = [w for w in x.columns if typedict[w] == "Nominal"];
-# TODO: Not avery ordinal variables are in the machine understandable way.
-# Fix: HeatingQC_nom, Fence, attic
+        be['BSMT_LowQual_bin'] = pd.cut(be['BSMT_LowQual'], [-1, 1, 500, 1000, 1500, 2500], labels = ['No basement', '0-500', '500-1000', '1000-1500', '1500+']);
+        be['BSMT_HighQual_bin'] = pd.cut(be['BSMT_HighQual'], [-1, 1, 500, 1000, 1500, 2500], labels = ['No basement', '0-500', '500-1000', '1000-1500', '1500+']);
+        be.drop(['BSMT_HighQual', 'BSMT_LowQual', 'GrLivArea', 'LotArea'], axis = 1, inplace = True);
 
-x_num = x[col_num];
-x_nom = x[col_nom];
+        be = dummify(be, non_dummies_linear, dummies_linear);
 
-# Encode all nominal and ordinal variables.
+        if method == "svrl":
+            if not standardized_l:
+                be = pd.DataFrame(svr_backend_scaler.fit_transform(be), columns = be.columns);
+                standardized_l = True;
+            else:
+                be = pd.DataFrame(svr_backend_scaler.transform(be), columns = be.columns);
+    elif method == "svrg":
+        be = fe.copy();
+        be.drop(columns = ['SalePrice'], axis =1, inplace = True);
+        be['ExterQualDisc']=be['ExterQual']-be['OverallQual'];
+        be['OverallCondDisc']=be['OverallCond']-be['OverallQual'];
+        be['KitchenQualDisc']=be['KitchenQual']-be['OverallQual'];
+        be=be.drop(['ExterQual','OverallCond','KitchenQual'],axis=1);
 
-lencoder = LabelEncoder();
+        be = dummify(be, non_dummies, dummies);
 
-temp = pd.DataFrame({"SalePrice": x["SalePrice"]});
-for col_name in col_nom:
-    # temp = lencoder.fit_transform(np.array(str(x[[col_name]])).reshape(-1,1));
-    temp[col_name] = np.array(lencoder.fit_transform(x[col_name].astype(str))).reshape(-1,1);
-    
-temp.drop("SalePrice", axis = 1, inplace = True);
+        be['GrLivArea_log'] = np.log10(be['GrLivArea']);
+        be['LotArea_log'] = np.log10(be['LotArea']);
+        be.drop(['GrLivArea', 'LotArea'], axis = 1, inplace = True);
 
-# Add the positional data here later.
-x = pd.concat([x_num, temp], axis = 1);
+        if not standardized_g:
+            be = pd.DataFrame(svrg_backend_scaler.fit_transform(be), columns = be.columns);
+            standardized_g = True;
+        else:
+            be = pd.DataFrame(svrg_backend_scaler.transform(be), columns = be.columns);
 
-# Implementing Matt's idea on 8/27. Drop some month/year data, logged data,...
-# x = x[(x["SaleCondition"] == 4) | (x["SaleCondition"] == 5)]; # 4=Normal, 5=Partial. shape=(2495, 105)
-x.drop(["YrSold", "MoSold", "Months_Elapsed", "SaleType"], axis = 1, inplace = True); # (2495, 99)
+    return be;
 
-y = x["SalePrice"];
-ylog = x["SalePrice_log"];
+def predict_from_front(fe, method = "cat"):
+    '''
+    Description:
+    Given a frontend data frame, and a string describing a regressor, predicts.
+    Input:
+    fe: The frontend dataframe. Columns must be the same as those in version 6 of the housing data.
+    method: The string which describes the regressor. Default = "cat". Compatible values: See above.
+    Output: A pd.Series predicting the output.
+    '''
+    if method_dict[method]["Scale"] == "lin":
+        return method_dict[method]["Regressor"].predict(front_to_back(fe, method));
+    elif method_dict[method]["Scale"] == "log": # The method is log scaled. Needs an exponentiation
+        return 10 ** method_dict[method]["Regressor"].predict(front_to_back(fe, method));
+    else: # The method is log scaled then standardized.
+        return 10 ** (svr_price_scaler.inverse_transform\
+        (method_dict[method]["Regressor"].predict(front_to_back(fe, method))));
+    return;
 
-x.drop(["SalePrice", "SalePrice_log"], axis = 1, inplace = True); # (2495, 99)
-
-log_col = [lg for lg in x.columns if lg.find("log") != -1];
-x.drop(log_col, axis = 1, inplace = True); #(2495, 94)
-
-# Load and fit models
+##########################
+# The zoo of regressors...
 cat = CatBoostRegressor();
-cat.load_model("./data/woof.meow", "cbm");
+cat.load_model("./data/HousePriceCatBoost", "cbm");
+
+with open('./data/linearmodel.pickle', mode = 'rb') as file:
+    lm = pickle.load(file);
+
+with open('./data/SVR_model.pickle', mode = 'rb') as file:
+    svrl = pickle.load(file);
+
+with open('./data/SVR_model_g.pickle', mode = 'rb') as file:
+    svrg = pickle.load(file);
+
+back_end = front_to_back(front_end, "svrl");
+back_end = front_to_back(front_end, "svrg");
+
+method_dict = {
+    "cat": {"Scale": "lin", "Order": False, "Regressor": cat,
+            "Altered": ['Neighborhood', 'BldgType', 'MasVnrType', 'ExterQual','OverallCond','KitchenQual']},
+    "lm": {"Scale": "log", "Order": True, "Regressor": lm,
+            "Altered": ['Neighborhood', 'BldgType', 'MasVnrType', 'BSMT_HighQual', 'BSMT_LowQual',
+            'ExterQual','OverallCond','KitchenQual', 'GrLivArea', 'LotArea']},
+    "svrl":{"Scale": "fitlog", "Order": True, "Regressor": svrl,
+            "Altered": ['Neighborhood', 'BldgType', 'MasVnrType', 'BSMT_HighQual', 'BSMT_LowQual',
+            'ExterQual','OverallCond','KitchenQual', 'GrLivArea', 'LotArea']},
+    "svrg":{"Scale": "fitlog", "Order": True, "Regressor": svrg,
+            "Altered": ['Neighborhood', 'BldgType', 'MasVnrType',
+            'ExterQual','OverallCond','KitchenQual', 'GrLivArea', 'LotArea']}
+};
+
+# Testing area for the latest machine learning model.
+#transformation of front-end to back-end.
+#back_end = front_to_back(front_end, "svrl");
+
+back_end = front_to_back(front_end, "svrg");
+print(svrg.score(back_end, y_std));
+
+##########################
+# Constants, though much more should be defined...
 
 # These are the columns to be displayed in a standard DataTable.
-display_columns = {"Price":"SalePrice", "Ground Living Area":"GrLivArea", "Quality": "OverallQual",\
-                  "Bedrooms": "BedroomAbvGr", "Bathrooms": "FullBath", "Neighborhood": "Neighborhood"};
+display_columns = {"Address": "Address", "Sale Price Price":"SalePrice", "Ground Living Area":"GrLivArea", "Quality (1-8)": "Quality",\
+                  "# of Bedrooms": "BedroomAbvGr", "# of Bathrooms": "FullBath", "Neighborhood": "Neighborhood"};
 PAGE_SIZE = 10;
+
+#########################
+# The interface
 
 layout = html.Div([
 
@@ -243,36 +182,92 @@ layout = html.Div([
                 width=12)
     ])
     ]),
-    
+
     dbc.Row([
         ### INPUTS
         dbc.Col([
             html.H5("Please click on graph a house you're interested in:",
                     className='text-center text-primary'),
+            html.Hr(),
             dcc.Checklist(id = "show_all_pids",
             options=[
             {'label': 'Show all properties', 'value': 'show_all_pid'}],
             value=[],
-            labelStyle={'display': 'inline-block'}
+            labelStyle={'display': 'inline-block'},
+            className='text-center'
             ),
-            dcc.Graph(id="pid_scatter", clickData=None),
+            dcc.Graph(id="pid_scatter", clickData=None, style={"height": "60%"}),
             dt.DataTable(id='pid_table',
                          columns=[{"name": k, "id": display_columns[k]} for k in display_columns],
                          page_current=0, page_size=PAGE_SIZE, page_action='custom')
         ], width = {'size':7, 'order':1}),
-    
+
         ### INPUTS
         dbc.Col([
-            html.H5("The price of the house:", id = "selected_pid",
+            html.H5("Here is your dream home...", id = "selected_pid",
                     className='text-center text-primary'),
-            dcc.Graph(id="pid_quality_chage")
+            html.Hr(),
+            html.P("The nitty gritty:"),
+            dcc.Checklist(id = "check_methods",
+            options=[
+                {'label': 'CatBoost', 'value': 'check_cat'},
+                {'label': 'Linear', 'value': 'check_lm'},
+                {'label': 'Linear SVR', 'value': 'check_svrl'},
+                {'label': 'Gaussian SVR', 'value': 'check_svrg'}],
+            value=['check_cat', 'check_lm', 'check_svrg'],
+            labelStyle={'display': 'inline-block'},
+            className='text-center'),
+            html.Hr(),
+
+            html.P("Let's get ready to flip the house and get filthy rich!"),
+
+            html.Div([
+            dcc.Dropdown(
+                id='flip_major',
+                options=[{'label': column_title_dict[i]["Description"], 'value': i}\
+                for i in [i for i in column_title_dict if (column_title_dict[i]["Actionable"]==True) &\
+                (column_title_dict[i]["Select"]=="Major")]],
+                value='GrLivArea'
+            )], style={'width': '48%', 'display': 'inline-block'}),
+
+            html.Div([
+                dcc.Dropdown(
+                    id='flip_minor',
+                    options=[{'label': column_title_dict[i]["Description"], 'value': i}\
+                    for i in column_title_dict if (column_title_dict[i]["Actionable"]==True) &\
+                    (column_title_dict[i]["Select"]=="Minor")],
+                    value=''
+                )
+            ], style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),
+            dcc.Graph(id="pid_quality_change", figure = px.scatter()),
+            html.Hr(),
+            html.P("Just looking around?"),
+            html.Div([
+            dcc.Dropdown(
+                id='explore_major',
+                options=[{'label': column_title_dict[i]["Description"], 'value': i}\
+                for i in [i for i in column_title_dict if (column_title_dict[i]["Select"]=="Major")]],
+                value='LotArea'
+            )], style={'width': '48%', 'display': 'inline-block'}),
+
+            html.Div([
+                dcc.Dropdown(
+                    id='explore_minor',
+                    options=[{'label': column_title_dict[i]["Description"], 'value': i}\
+                    for i in column_title_dict if (column_title_dict[i]["Select"]=="Minor")],
+                    value=''
+                )
+            ], style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),
+
+            dcc.Graph(id="pid_area_change", figure = px.scatter())
         ], width = {'size':5, 'order':2})
     ])
 ])
-        
+
 
 ##### ml_test
 
+# Update the scatter plot. Especially important when coming from the map page.
 @app.callback(
     Output('pid_scatter', 'figure'),
     [Input('data_pid', 'data'),
@@ -281,18 +276,20 @@ layout = html.Div([
     Input('pid_table', "page_size")])
 def test_graph_data_pid(value, show_all, page_current, page_size):
     if not value: return;
-    
+
     temp_house = housing.reset_index();
     temp_house = temp_house[temp_house["PID"].isin(value["PID"])];
+    temp_house["Quality"] = temp_house["OverallQual"].apply(lambda x: int(7*x+1));
     if show_all == []:
         temp_house = temp_house.iloc[\
         page_current*page_size:(page_current+ 1)*page_size];
-    
+
     fig = px.scatter(temp_house, x="GrLivArea", y="SalePrice",
-                 size="OverallQual", color="Neighborhood", hover_name= "PID",
+                 size="Quality", color="Neighborhood", hover_name= "Address",
                  size_max=10);
     return fig;
 
+# Update the data table in the below.
 @app.callback(
     Output('pid_table', 'data'),
     Input('data_pid', 'data'),
@@ -301,50 +298,148 @@ def test_graph_data_pid(value, show_all, page_current, page_size):
 def update_table(pid_data, page_current,page_size):
     if not pid_data: return;
     #if len(pid_data["PID"]) <= (page_current)*page_size: return;
-    
+
+    print(pid_data);
     temp_house = housing.reset_index();
     temp_house = temp_house[temp_house["PID"].isin(pid_data["PID"])];
-    
+    temp_house["Quality"] = temp_house["OverallQual"].apply(lambda x: int(7*x+1));
+
     return temp_house.iloc[
         page_current*page_size:(page_current+ 1)*page_size
     ][list(display_columns.values())].to_dict('records');
 
+# When a point on the plot is selected, fetch and display the address.
 @app.callback(
     Output('selected_pid', 'children'),
     Input('pid_scatter', 'clickData'))
 def update_selected_on_click(clickData):
-    if not clickData: return;
-    return clickData['points'][0]['hovertext'];
+    if not clickData: return "Looking for your dream home?";
+    address = clickData['points'][0]['hovertext'];
+    # temp = housing;
+    # temp = temp.reset_index();
+    # temp = temp[temp["A"] == clickData['points'][0]['hovertext']]
+    # # temp["Address"] = temp["Address"].apply(lambda x: x[:-17]); # ", Ames, Iowa, USA"
+    # address = temp[temp["PID"] == clickData['points'][0]['hovertext']]["Address"];
+    return "Your selection: " + address;
+#     return clickData['points'][0]['hovertext'];
 
-@app.callback(
-    Output('pid_quality_chage', 'figure'),
-    Input('pid_scatter', 'clickData'))
-def update_quality_chart(clickData):
-    if not clickData: return;
-    
-    temp_house = x.reset_index();
-    temp_house = temp_house[temp_house["PID"] == clickData['points'][0]['hovertext']];
-    print(temp_house, temp_house.shape);
-    
-    fig = px.scatter(temp_house, x="GrLivArea", y="LotArea",
-                 size="OverallQual", color="Neighborhood",
-                 size_max=10);
+def flipping_chart(PID, major, minor=None, estimator = ["cat"]):
+    '''
+    Description:
+    The guy who draws. The core of this file. If you dare deleting this...
+    I will cry.
+    Input:
+    PID: A nine-digit-ish thing for each property used by USPS or so...
+    major: The major variable. Will be the x-axis of a flipping chart.
+    minor: The minor variable. If assigned, will summon spaghettis for each unique value.
+    estimator: A list of strings, each represents a regressor.
+    Output:
+    A flipping chart. Yeah.
+    '''
+    fig = px.scatter();
+
+    for method in estimator:
+        temp_house = front_end.reset_index();
+        temp_house = temp_house[temp_house["PID"] == PID];
+
+        # Compute the predicted value of the selected house.
+        maj_val = float(temp_house[major]);
+        temp_frame = temp_house.set_index("PID");
+        pred_price = predict_from_front(temp_frame, method)[0];
+        # pred_price = cat.predict(front_to_back(temp_frame, "cat"))[0];
+
+        temp_house.drop(major, axis = 1, inplace = True);
+        if minor: temp_house.drop(minor, axis = 1, inplace = True);
+
+        if "Range" in column_title_dict[major]:
+            major_range = np.linspace(column_title_dict[major]["Range"][0],\
+            column_title_dict[major]["Range"][1],\
+            int((column_title_dict[major]["Range"][1]-column_title_dict[major]["Range"][0])/\
+            column_title_dict[major]["Range"][2])+1);
+        else:
+            r_max = front_end[major].max();
+            r_min = front_end[major].min();
+            major_range = np.linspace(r_min, r_max, 300);
+        if minor:
+            minor_range = sorted(list(front_end[minor].unique()));
+
+        temp = pd.DataFrame({"PID": [PID for i in major_range], major: major_range});
+        temp_house = temp_house.merge(temp, on="PID");
+        temp_major = temp_house[major];
+
+        if minor:
+            temp = pd.DataFrame({"PID": [PID for i in minor_range], minor: minor_range});
+            temp_house = temp_house.merge(temp, on="PID");
+            temp_minor = temp_house[minor];
+
+        temp_house.set_index("PID", inplace=True);
+        # temp_house = front_to_back(temp_house, "cat");
+
+        # If the order of variables matter for the regressor, rearrange it.
+        if method_dict[method]["Order"]:
+            temp_house = temp_house[front_end.columns];
+
+        temp_house["Sale Price Predicted"] = predict_from_front(temp_house, method);
+
+        if not minor:
+            fig.add_trace(go.Scatter(x=temp_house[major], y=temp_house["Sale Price Predicted"],\
+            name = major+'_'+method));
+            # fig = px.line(temp_house, x=major, y="Sale Price Predicted",\
+            # labels={major: column_title_dict[major]["Description"]});
+        else:
+            #fig = px.scatter();
+            for i in minor_range:
+                temp = temp_house[temp_house[minor]==i];
+
+                if type(i) in [np.float64, np.int64]: name = "{:.2f}_{}".format(i, method);
+                else: name = i + '_' + method;
+                fig.add_trace(go.Scatter(x=temp[major], y=temp["Sale Price Predicted"], name = name));
+
+        fig.add_trace(go.Scatter(x=[maj_val], y=[pred_price], name="Current_"+method,\
+        marker=dict(size=12)));
+
+        if not minor:
+            fig.update_layout(showlegend=False);
+
+    fig.update_layout(legend=dict(yanchor="bottom", y=0.01, xanchor="right", x=0.99,\
+    font=dict(size=8), bgcolor='rgba(0,0,0,0)'));
+    fig.update_xaxes(title_text=column_title_dict[major]["Description"]);
+    fig.update_yaxes(title_text="Sales Price Predicted");
     return fig;
 
 
-# layout = html.Div([
-#     html.H3('App 1'),
-#     dcc.Dropdown(
-#         id='app-1-dropdown',
-#         options=[
-#             {'label': 'App 1 - {}'.format(i), 'value': i} for i in [
-#                 'NYC', 'MTL', 'LA'
-#             ]
-#         ]
-#     ),
-#     html.Div(id='app-1-display-value'),
-#     dcc.Link('Go to App 2', href='/apps/app2')
-# ])
+@app.callback(
+    Output('pid_quality_change', 'figure'),
+    Input('pid_scatter', 'clickData'),
+    Input('flip_major', 'value'),
+    Input('flip_minor', 'value'),
+    Input('check_methods', 'value'))
+def update_flip_chart(clickData, major, minor, methods):
+    if not clickData or not major: return px.scatter();
+
+    temp = housing;
+    methods = [x[6:] for x in methods];
+    address = clickData['points'][0]['hovertext'];
+    if "PID" not in temp.columns: temp.reset_index(inplace = True);
+    PID = int(temp[temp["Address"]==address]["PID"]);
+    print(PID);
+    return flipping_chart(PID, major, minor, methods);
+
+@app.callback(
+    Output('pid_area_change', 'figure'),
+    Input('pid_scatter', 'clickData'),
+    Input('explore_major', 'value'),
+    Input('explore_minor', 'value'),
+    Input('check_methods', 'value'))
+def update_explore_chart(clickData, major, minor, methods):
+    if not clickData or not major: return px.scatter();
+
+    temp = housing;
+    methods = [x[6:] for x in methods];
+    address = clickData['points'][0]['hovertext'];
+    if "PID" not in temp.columns: temp.reset_index(inplace = True);
+    PID = int(temp[temp["Address"]==address]["PID"]);
+    return flipping_chart(PID, major, minor, methods);
 
 
 # @app.callback(
