@@ -82,6 +82,8 @@ layout = html.Div([
                     value=1000  ###df_current.at[5, 'Current']   ########## NEED TO FIND ROW FOR IT
                 ),
 #### Porch Slider
+                html.P('Porch Square Footage',
+                       className='text-center text-primary, mb-1, medium'),
                 dcc.Slider(
                     id='future_porch',
                     min=300,
@@ -95,6 +97,8 @@ layout = html.Div([
                 ),
 
 ########## QUALITY SLIDERS
+                html.P('Overall Quality',
+                       className='text-center text-primary, mb-1, medium'),
                 dcc.Slider(
                     id='future_overall_q',
                     min=0,
