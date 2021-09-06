@@ -29,8 +29,11 @@ y = front_end["SalePrice"];
 
 # Some first step preprocessing.
 svr_backend_scaler = StandardScaler();
+svrg_backend_scaler = StandardScaler();
 svr_price_scaler = StandardScaler();
-standardized = False;
+standardized_l = False; # Whether the standard scalar of linear svr is fitted
+standardized_g = False; # Whether the standard scalar of Gaussian svr is fitted
+
 svr_price_scaler.fit(np.array(np.log10(y)).reshape(-1,1));
 y_std = svr_price_scaler.transform(np.array(np.log10(y)).reshape(-1,1));
 
@@ -47,7 +50,8 @@ def front_to_back(fe, method = "cat"):
     "svrl": Support vector regressor with linear kernel
     Output: The backend dataframe. Should be ready to "regressor.fit()".
     '''
-    global standardized;
+    global standardized_l;
+    global standardized_g;
 
     be = fe.copy();
 
@@ -74,11 +78,31 @@ def front_to_back(fe, method = "cat"):
         be = dummify(be, non_dummies_linear, dummies_linear);
 
         if method == "svrl":
-            if not standardized:
+            if not standardized_l:
                 be = pd.DataFrame(svr_backend_scaler.fit_transform(be), columns = be.columns);
-                standardized = True;
+                standardized_l = True;
             else:
                 be = pd.DataFrame(svr_backend_scaler.transform(be), columns = be.columns);
+    elif method == "svrg":
+        be = fe.copy();
+        be.drop(columns = ['SalePrice'], axis =1, inplace = True);
+        be['ExterQualDisc']=be['ExterQual']-be['OverallQual'];
+        be['OverallCondDisc']=be['OverallCond']-be['OverallQual'];
+        be['KitchenQualDisc']=be['KitchenQual']-be['OverallQual'];
+        be=be.drop(['ExterQual','OverallCond','KitchenQual'],axis=1);
+
+        be = dummify(be, non_dummies, dummies);
+
+        be['GrLivArea_log'] = np.log10(be['GrLivArea']);
+        be['LotArea_log'] = np.log10(be['LotArea']);
+        be.drop(['GrLivArea', 'LotArea'], axis = 1, inplace = True);
+
+        if not standardized_g:
+            be = pd.DataFrame(svrg_backend_scaler.fit_transform(be), columns = be.columns);
+            standardized_g = True;
+        else:
+            be = pd.DataFrame(svrg_backend_scaler.transform(be), columns = be.columns);
+
     return be;
 
 def predict_from_front(fe, method = "cat"):
@@ -110,6 +134,12 @@ with open('./data/linearmodel.pickle', mode = 'rb') as file:
 with open('./data/SVR_model.pickle', mode = 'rb') as file:
     svrl = pickle.load(file);
 
+with open('./data/SVR_model_g.pickle', mode = 'rb') as file:
+    svrg = pickle.load(file);
+
+back_end = front_to_back(front_end, "svrl");
+back_end = front_to_back(front_end, "svrg");
+
 method_dict = {
     "cat": {"Scale": "lin", "Order": False, "Regressor": cat,
             "Altered": ['Neighborhood', 'BldgType', 'MasVnrType', 'ExterQual','OverallCond','KitchenQual']},
@@ -118,16 +148,18 @@ method_dict = {
             'ExterQual','OverallCond','KitchenQual', 'GrLivArea', 'LotArea']},
     "svrl":{"Scale": "fitlog", "Order": True, "Regressor": svrl,
             "Altered": ['Neighborhood', 'BldgType', 'MasVnrType', 'BSMT_HighQual', 'BSMT_LowQual',
+            'ExterQual','OverallCond','KitchenQual', 'GrLivArea', 'LotArea']},
+    "svrg":{"Scale": "fitlog", "Order": True, "Regressor": svrg,
+            "Altered": ['Neighborhood', 'BldgType', 'MasVnrType',
             'ExterQual','OverallCond','KitchenQual', 'GrLivArea', 'LotArea']}
 };
 
 # Testing area for the latest machine learning model.
-#transformation of front-end to back-end
+#transformation of front-end to back-end.
 #back_end = front_to_back(front_end, "svrl");
 
-back_end = front_to_back(front_end, "svrl");
-print(svrl.score(back_end, y_std));
-print(back_end.shape)
+back_end = front_to_back(front_end, "svrg");
+print(svrg.score(back_end, y_std));
 
 ##########################
 # Constants, though much more should be defined...
@@ -179,8 +211,9 @@ layout = html.Div([
             options=[
                 {'label': 'CatBoost', 'value': 'check_cat'},
                 {'label': 'Linear', 'value': 'check_lm'},
-                {'label': 'Linear SVR', 'value': 'check_svrl'}],
-            value=['check_cat', 'check_lm', 'check_svrl'],
+                {'label': 'Linear SVR', 'value': 'check_svrl'},
+                {'label': 'Gaussian SVR', 'value': 'check_svrg'}],
+            value=['check_cat', 'check_lm', 'check_svrg'],
             labelStyle={'display': 'inline-block'},
             className='text-center'),
             html.Hr(),
