@@ -36,7 +36,7 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI],
                 )
 
 
-housing_basic = pd.read_csv('./data/basic_housing.csv')
+housing_basic = pd.read_csv('./data/ames_housing_price_data_final.csv')
 money = FormatTemplate.money(0)
 
 layout = html.Div([

@@ -25,7 +25,7 @@ import pandas_datareader.data as web
 # from geopy.distance import geodesic
 # import shapely.geometry
 import geobuf
-from apps import filters
+from apps import filters, data_frame
 
 # app = Dash(__name__)
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI],
@@ -46,7 +46,7 @@ poi_fountain = dlx.geojson_to_geobuf(json.load(open('./data/poi_fountain.geojson
 poi_misc = dlx.geojson_to_geobuf(json.load(open('./data/poi_misc.geojson')))
 poi_church = dlx.geojson_to_geobuf(json.load(open('./data/poi_churches.geojson')))
 
-housing_basic = pd.read_csv('./data/basic_housing.csv')
+housing_basic = pd.read_csv('./data/ames_housing_price_data_final.csv')
 
 housing_geo = pd.read_csv('./data/house_surrounding_avg_prices.csv')
 
@@ -218,18 +218,18 @@ layout = html.Div([
             dcc.RangeSlider(
                 id='sqft',
                 min=0,
-                max=2500,
+                max=5000,
                 step=10,
                 marks={
                     0: '0',
-                    1250: '1250',
+                    # 1250: '1250',
                     # 200000: '$200,000',
                     2500: '2,500',
-                    # 300000: '$300,000',
+                    # 3750: '3,750',
                     # 400000: '$400,000',
                     5000: '5,000',
                 },
-                value=[100, 1000]
+                value=[1000, 2500]
             )
         ], width={'size':3, 'order': 1}),
 
@@ -393,14 +393,18 @@ layout = html.Div([
 ]),
         dbc.Row([
             html.Hr()
-])    #,
-#         dbc.Row([
+]),
+
+        dbc.Row([
+html.Div(data_frame.layout)
+
+
 #             dash_table.DataTable(
 #                 id='table',
 #                 columns=[{"name": i, "id": i} for i in housing_basic.columns],
 #                 data=housing_basic.to_dict('records'), style_as_list_view=True
 # )
-#         ])
+        ])
     ])
 
 #     dbc.Row([
@@ -408,63 +412,6 @@ layout = html.Div([
 # ], fluid=True)
 # ])
 ])
-
-# @app.callback(Output("PIDs", "children"), [Input("housing_id", "click_feature")])
-# def house_click(feature):
-#     if feature is not None:
-#         return f"You clicked {feature['properties']['PID']}"
-
-
-##### MAIN CALLBACK HERE TESTING IT OUT
-# some work on callbacks folded here
-
-# @app.callback(
-#     dash.dependencies.Output('output-container-range-slider', 'children'),
-#     dash.dependencies.Input('price', 'value'))
-# def update_output(value):
-#     print(value)
-#     return ('${:,} - ${:,}'.format(value[0], value[1]))
-
-
-
-
-# @app.callback(
-#     dash.dependencies.Output('output-container-range-slider', 'children'),
-#     [dash.dependencies.Input('price', 'value')])
-# def update_output(value):
-#     return ('${:,} - ${:,}'.format(value[0], value[1]))
-#
-#
-# @app.callback(
-#     dash.dependencies.Output('output-container-sq-foot-slider', 'children'),
-#     [dash.dependencies.Input('sqft', 'value')])
-# def update_output(value):
-#     return ('{:,} - {:,} sq. ft.'.format(value[0], value[1]))
-#
-#
-# @app.callback(
-#     Output("out_bedrooms", "children"),
-#     [Input("input_bedrooms", "value")],
-# )
-# def cb_render(*vals):
-#     # list(housing[housing['BedroomAbvGr'] == 2]['PID'])
-#     return " | ".join((str(val) for val in vals if val))
-#
-# @app.callback(
-#     Output("out_bathrooms", "children"),
-#     [Input("input_bathrooms", "value")],
-# )
-# def cb_render(*vals):
-#     return " | ".join((str(val) for val in vals if val))
-#
-
-# app.clientside_callback("function(x){return x;}",
-#                         Output("housing_geo", "hideout"),
-#                         Input("dd", "value"))
-#
-
-# app.clientside_callback("function(x){return x;}", Output("housing_id", "hideout"), Input("dd", "value"))
-
 
 
 

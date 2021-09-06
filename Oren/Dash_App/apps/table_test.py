@@ -9,14 +9,20 @@ from collections import OrderedDict
 import dash_daq as daq
 import dash_bootstrap_components as dbc
 
-df = pd.read_csv('./data/basic_housing.csv', index_col=0)
+df = pd.read_csv('./data/ames_housing_price_data_final.csv')
 params = df.columns
-df = df[df['PID'] == 916176125]
+df = df[df['PID'] == 909176150]
 
 df_current = df.T.reset_index()
 df_current.columns = ['Features', 'Current']
+sale_price = df_current.loc[1, "Current"]#.values[0]
+address = df_current.loc[2, "Current"]
+droprows = [0, 1, 2, 12, 13, 14, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
+df_current = df_current.drop(droprows, axis =0)
 df_future = df_current.copy()
 df_future.columns = ['Features', 'CompEdit']
+print(df_current)
+
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI],
                 meta_tags=[{'name': 'viewport',
@@ -28,6 +34,8 @@ layout = html.Div([
     dbc.Container([
         dbc.Row([
             dbc.Col(children=[html.H3("Current House",
+                                      className='text-center text-primary, mb-4'),
+                                html.H3("${:,}".format(sale_price),
                                       className='text-center text-primary, mb-4'),
                               dash_table.DataTable(
                                   id='current-table',
@@ -48,7 +56,10 @@ layout = html.Div([
             ),
 
             dbc.Col(children=[
-
+                            html.H3("Home Address",
+                                      className='text-center text-primary, mb-4'),
+                                html.H3(address,
+                                      className='text-center text-primary, mb-4'),
 #### Square Footage slider
                 html.P('General Living Area Square Footage',
                        className='text-center text-primary, mb-1, medium'),
@@ -63,7 +74,7 @@ layout = html.Div([
                         2500: '2,500',
                         5000: '5,000',
                     },
-                    value= 1000  ###df_current.at[5, 'Current']   ########## NEED TO FIND ROW FOR IT
+                    value= df_current.at[3, 'Current']   ########## NEED TO FIND ROW FOR IT
                 ),
 #### Basement Slider
                 html.P('Finished Basement Square Footage',
@@ -71,15 +82,16 @@ layout = html.Div([
                 dcc.Slider(
                     id='future_basement',
                     min=0,
-                    max=2000,  #### create max by adding low and high quality
+                    max= df_current.at[17, 'Current'] + df_current.at[6, 'Current'] ,
                     step=10,
                     marks={
                         0: '0',
-                        1250: '1250',
-                        2500: '2,500',
-                        5000: '5,000',
+                        # 100: '100',
+                        # 2500: '2,500',
+                        (df_current.at[17, 'Current'] + df_current.at[6, 'Current']):
+                            f"{df_current.at[17, 'Current'] + df_current.at[6, 'Current']}",
                     },
-                    value=1000  ###df_current.at[5, 'Current']   ########## NEED TO FIND ROW FOR IT
+                    value= df_current.at[17, 'Current']
                 ),
 #### Porch Slider
                 html.P('Porch Square Footage',
@@ -184,7 +196,10 @@ layout = html.Div([
                 width={"size": 6}
             ),
 
-            dbc.Col(children=[
+            dbc.Col(children=[html.H3("Future House",
+                                      className='text-center text-primary, mb-4'),
+                                html.H3("${:,}".format(sale_price), ########## Change
+                                      className='text-center text-primary, mb-4'),
                 dash_table.DataTable(
                     id='computed-table',
                     columns=[
@@ -210,12 +225,32 @@ layout = html.Div([
 
 @app.callback(
     Output('computed-table', 'data'),
-    Input('daq_bath_full', 'value'),
-    Input('daq_bedroom', 'value')
+    Input('future_sqft', 'value'),
+    Input('future_basement', 'value'),
+    Input('future_porch', 'value'),
+    # Input('future_overall_q', 'value'),
+    Input('future_bedroom', 'value'),
+    Input('future_bath_full', 'value'),
+    Input('future_bath_half', 'value'),
+    Input('future_fireplaces', 'value'),
+    Input('future_garage', 'value'),
+    Input('pool_switch', 'value'),
+    Input('future-veneer', 'value')
 )
-def display_output(value1, value2):
-    df_future.at[5, 'CompEdit'] = value1
-    df_future.at[6, 'CompEdit'] = value2
+def display_output(sqft_value, basement_value, porch_value, bed_value,
+                   bath_full_value, bath_half_value, fire_value, garage_value,
+                   pool_value, veneer_value):
+    df_future.at[3, 'CompEdit'] = sqft_value
+    df_future.at[17, 'CompEdit'] = basement_value
+    df_future.at[6, 'CompEdit'] = basement_value - (df_current[17, 'CompEdit'] + df_current[6, 'CompEdit'])
+    df_future.at[16, 'CompEdit'] = porch_value
+    df_future.at[20, 'CompEdit'] = bed_value
+    df_future.at[3, 'CompEdit'] = bath_full_value
+    df_future.at[11, 'CompEdit'] = bath_half_value
+    df_future.at[18, 'CompEdit'] = fire_value
+    df_future.at[8, 'CompEdit'] = garage_value
+    df_future.at[19, 'CompEdit'] = pool_value
+    df_future.at[9, 'CompEdit'] = veneer_value
     return df_future.to_dict('records')
 
 
