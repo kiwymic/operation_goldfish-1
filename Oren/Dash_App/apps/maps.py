@@ -10,6 +10,7 @@ from dash_extensions.javascript import assign
 import dash
 from dash_extensions.javascript import arrow_function
 import dash_bootstrap_components as dbc
+import dash_table
 
 import json
 
@@ -24,7 +25,7 @@ import pandas_datareader.data as web
 # from geopy.distance import geodesic
 # import shapely.geometry
 import geobuf
-
+from apps import filters
 
 # app = Dash(__name__)
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI],
@@ -138,7 +139,7 @@ geojson_filter = assign(
 layout = html.Div([
     dbc.Container([
     dbc.Row([
-        dbc.Col(html.H3("Mapping Housing and Points of Interest in Ames Iowa",
+        dbc.Col(html.H3("Mapping Housing and Points of Interest in Ames, Iowa",
                         className='text-center text-primary, mb-4'),
                 width=12)
     ]),
@@ -167,33 +168,48 @@ layout = html.Div([
                 },
                 value=[100000, 200000]
             ),
+            html.Hr(),
             html.H5("Bedrooms",
-                    className='text-left text-primary'),
+                    className='text-center text-primary'),
             # html.P(id="out_bedrooms",
             #        className='text-center text-primary, mb-1, small'),
-        dcc.Input(
-            id="input_bedrooms",
-            type="number",
-            placeholder="Input Number",
-            step=1,
-            min=0,
-            max=6,
-            value=1,
-            style={'width': 120}
-        ),
+            dcc.RangeSlider(
+                id='input_bedrooms',
+                min=1,
+                max=5,
+                step=1,
+                marks={
+                    1: '1',
+                    2: '2',
+                    3: '3',
+                    4: '4',
+                    5: '5'
+                },
+                value=[1, 2]
+            ),
+            html.Hr(),
+
             html.H5("Bathrooms",
                     className='text-center text-primary'),
             # html.P(id="out_bedrooms",
             #        className='text-center text-primary, mb-1, small'),
-        dcc.Input(
-            id="input_bathrooms",
-            type="number",
-            placeholder="Input Number",
-            min=1,
-            max=5,
-            value=1,
-            style={'width': 120}
-        ),
+
+            dcc.RangeSlider(
+                    id='input_bathrooms',
+                    min=1,
+                    max=5,
+                    step=1,
+                    marks={
+                        1: '1',
+                        2: '2',
+                        3: '3',
+                        4: '4',
+                        5: '5'
+                    },
+                    value=[1, 2]
+                ),
+
+            html.Hr(),
 
             html.H5("Sq Footage Slider",
                     className='text-center text-primary'),
@@ -216,6 +232,7 @@ layout = html.Div([
                 value=[100, 1000]
             )
         ], width={'size':3, 'order': 1}),
+
         dbc.Col([
             dl.Map([
                 dl.TileLayer(),
@@ -224,9 +241,9 @@ layout = html.Div([
                         dl.LayerGroup(
                             dl.GeoJSON(
                                 data=housing_geo,
-                                options=dict(filter=geojson_filter), hideout= dict(name=dd_defaults),
+                                options=dict(filter=geojson_filter), hideout= dict(name=dd_defaults), # cluster=True,
                                 id="housing_id", zoomToBoundsOnClick=True)
-                        ), name="Housing", checked=False
+                        ), name="Housing", checked=True
                     ),
                         dl.Overlay(
                         dl.LayerGroup(
@@ -373,7 +390,17 @@ layout = html.Div([
     #         clearable=False, multi=True)
     #     ], width={'size':9, 'order': 2}
         ])
-])
+]),
+        dbc.Row([
+            html.Hr()
+])    #,
+#         dbc.Row([
+#             dash_table.DataTable(
+#                 id='table',
+#                 columns=[{"name": i, "id": i} for i in housing_basic.columns],
+#                 data=housing_basic.to_dict('records'), style_as_list_view=True
+# )
+#         ])
     ])
 
 #     dbc.Row([
@@ -381,31 +408,6 @@ layout = html.Div([
 # ], fluid=True)
 # ])
 ])
-# ])
-#
-# app.layout = html.Div(children=[
-# ,
-#
-#     # This just ensures we are getting the PID when clicked
-#
-#     dcc.Dropdown(id="dd", value=dd_defaults, options=dd_options, clearable=False, multi=True),
-#
-#     html.Div(id="PIDs"),
-#
-#     # This is adding a slider
-#     html.Label([
-#         "Price Range",
-#         dcc.RangeSlider(
-#             id='price',
-#             min=1000,
-#             max=500000,
-#             step=100,
-#             value=[100000, 200000]
-#         ),
-#         html.Div(id='output-container-range-slider')
-#     ])
-# ])
-
 
 # @app.callback(Output("PIDs", "children"), [Input("housing_id", "click_feature")])
 # def house_click(feature):
@@ -414,26 +416,6 @@ layout = html.Div([
 
 
 ##### MAIN CALLBACK HERE TESTING IT OUT
-# @app.callback(
-#     # dash.dependencies.Output('PID_list', 'children'),
-#     dash.dependencies.Output("housing_id", "hideout"),
-#     dash.dependencies.Input('price', 'value'),
-#     dash.dependencies.Input('sqft', 'value'),
-#     dash.dependencies.Input("input_bathrooms", "value"),
-#     dash.dependencies.Input("input_bedrooms", "value")
-# )
-# def update_output(prices, sqfts, bathrms, bedrms):
-#     foo = list(housing_basic[(housing_basic['GrLivArea'] > prices[0]) &
-#                        (housing_basic['GrLivArea'] < prices[1]) &
-#                        (housing_basic['LotArea'] > sqfts[0]) &
-#                        (housing_basic['LotArea'] < sqfts[1]) &
-#                        (housing_basic['FullBath'] == bathrms) &
-#                        (housing_basic['BedroomAbvGr'] == bedrms)]
-#                 ['PID'])
-#     print(foo)
-#     return dict(name=foo)
-
-
 # some work on callbacks folded here
 
 # @app.callback(

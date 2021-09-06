@@ -1,20 +1,46 @@
+## Plotly and Dash Loading
+import plotly.express as px
+# from jupyter_dash import JupyterDash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
+import dash_leaflet as dl
+import dash_leaflet.express as dlx
+from dash_extensions.javascript import assign
+import dash
+from dash_extensions.javascript import arrow_function
 import dash_bootstrap_components as dbc
 import dash_table
+from dash_table import DataTable, FormatTemplate
+
+import json
+
+# Pandas and geopandas stuff
+import pandas as pd
+import geopandas as gpd
+import pandas_datareader.data as web
+# from geopy.geocoders import Nominatim
+# import geopandas as gpd
+# import fiona
+# from arcgis.gis import GIS
+# from geopy.distance import geodesic
+# import shapely.geometry
+import geobuf
 
 
 from app import app
 from app import server
-from apps import maps, ml_test
+from apps import maps, data_frame, app1, filters # ml_test
 # from data import loading_stuff
+
+
+housing_basic = pd.read_csv('./data/basic_housing.csv')
 
 dropdown = dbc.DropdownMenu(
     children=[
         dbc.DropdownMenuItem("Home", href="/index"),
         dbc.DropdownMenuItem("Maps", href="/maps"),
-        dbc.DropdownMenuItem("Machine Learning", href="/ml_test"),
+        dbc.DropdownMenuItem("Machine Learning", href="/app1"),
     ],
     nav = True,
     in_navbar = True,
@@ -68,9 +94,35 @@ for i in [2]:
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     navbar,
-    html.Div(id='page-content')
+    html.Div(id='page-content'),
+    html.Div(data_frame.layout)
 ])
 
+# @app.callback(Output('table', 'style_data_conditional'),
+#              [Input('table', 'selected_rows')])
+# def update_styles(selected_rows):
+#     return [{'if': {'derived_virtual_selected_row_ids': i}, 'background_color': '#D2F3FF'} for i in selected_rows]
+
+@app.callback(
+    Output("table", "style_data_conditional"),
+    Input("table", "selected_rows"),
+)
+def style_selected_rows(sel_rows):
+    if sel_rows is None:
+        return dash.no_update
+    val = [
+        {"if": {"filter_query": "{{id}} ={}".format(i)}, "backgroundColor": "#404040",}
+        for i in sel_rows
+    ]
+    return val
+
+
+
+
+# @app.callback(Output("PIDs", "children"), [Input("housing_id", "click_feature")])
+# def house_click(feature):
+#     if feature is not None:
+#         return f"You clicked {feature['properties']['PID']}"
 
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
@@ -79,6 +131,8 @@ def display_page(pathname):
         return maps.layout
     elif pathname == '/plans':
         return plans.layout
+    elif pathname == '/app1':
+        return app1.layout
     else:
         return maps.layout
 
@@ -88,7 +142,11 @@ def display_page(pathname):
 def update_output_price_range(value):
     return ('${:,} - ${:,}'.format(value[0], value[1]))
 
-
+@app.callback(
+    Output('output-container-sq-foot-slider', 'children'),
+    [Input('sqft', 'value')])
+def update_output(value):
+    return ('{:,} - {:,} sq. ft.'.format(value[0], value[1]))
 
 @app.callback(
     # dash.dependencies.Output('PID_list', 'children'),
@@ -99,54 +157,76 @@ def update_output_price_range(value):
     Input("input_bedrooms", "value")
 )
 def update_output(prices, sqfts, bathrms, bedrms):
-    housing_basic = maps.housing_basic
     foo = list(housing_basic[(housing_basic['SalePrice'] > prices[0]) &
-                       (housing_basic['SalePrice'] < prices[1]) &
-                       (housing_basic['GrLivArea'] > sqfts[0]) &
-                       (housing_basic['GrLivArea'] < sqfts[1]) &
-                       (housing_basic['FullBath'] == bathrms) &
-                       (housing_basic['BedroomAbvGr'] == bedrms)]
+                        (housing_basic['SalePrice'] < prices[1]) &
+                        (housing_basic['GrLivArea'] > sqfts[0]) &
+                        (housing_basic['GrLivArea'] < sqfts[1]) &
+                        (housing_basic['FullBath'] >= bathrms[0]) &
+                        (housing_basic['FullBath'] <= bathrms[1]) &
+                        (housing_basic['BedroomAbvGr'] >= bedrms[0]) &
+                        (housing_basic['BedroomAbvGr'] <= bedrms[1])]
                 ['PID'])
-    print(foo)
-    # print((housing_basic['GrLivArea'] > prices[0]))
-    print(housing_basic['GrLivArea'])
     return dict(name=foo)
 
 
-# if __name__ == '__main__':
-#     app.run_server(host='127.0.0.1', debug=True)
-#
-#
-# app.layout = dbc.Container([
-#     dbc.Row([
-#         dbc.Col(html.H1("Machine Learning for Ames Iowa",
-#                         className='text-center text-primary, mb-4'),
-#                 width=12)
-#     ]),
-#     dbc.Row([
-#         html.Div(id='page-content')
-#     ]),
-#     dbc.Row([
-#         html.Div(id='page-content')
-#     ])
-# ])
-#
-#
-# #     html.Div([
-# #     dcc.Location(id='url', refresh=False),
-# #     html.Div(id='page-content')
-# # ])
-#
-#
-# @app.callback(Output('page-content', 'children'),
-#               Input('url', 'pathname'))
-# def display_page(pathname):
-#     if pathname == '/apps/app1':
-#         return app1.layout
-#     elif pathname == '/apps/app2':
-#         return app2.layout
-#     else:
-#         return app1.layout
+
+
+#### Creating filter for data_table
+
+@app.callback(
+    # dash.dependencies.Output('PID_list', 'children'),
+    Output("table", "data"),
+    # Output("pid_scatter", "figure"),
+    Input('price', 'value'),
+    Input('sqft', 'value'),
+    Input("input_bathrooms", "value"),
+    Input("input_bedrooms", "value")
+)
+def update_output(prices, sqfts, bathrms, bedrms):
+    return housing_basic[(housing_basic['SalePrice'] > prices[0]) &
+                        (housing_basic['SalePrice'] < prices[1]) &
+                        (housing_basic['GrLivArea'] > sqfts[0]) &
+                        (housing_basic['GrLivArea'] < sqfts[1]) &
+                        (housing_basic['FullBath'] >= bathrms[0]) &
+                        (housing_basic['FullBath'] <= bathrms[1]) &
+                        (housing_basic['BedroomAbvGr'] >= bedrms[0]) &
+                        (housing_basic['BedroomAbvGr'] <= bedrms[1])].to_dict('records')
+
+
+
+
+# def update_output(prices, sqfts, bathrms, bedrms):
+#     foo = list(maps.housing_basic[(maps.housing_basic['SalePrice'] > prices[0]) &
+#                         (maps.housing_basic['SalePrice'] < prices[1]) &
+#                         (maps.housing_basic['GrLivArea'] > sqfts[0]) &
+#                         (maps.housing_basic['GrLivArea'] < sqfts[1]) &
+#                         (maps.housing_basic['FullBath'] >= bathrms[0]) &
+#                         (maps.housing_basic['FullBath'] <= bathrms[1]) &
+#                         (maps.housing_basic['BedroomAbvGr'] >= bedrms[0]) &
+#                         (maps.housing_basic['BedroomAbvGr'] <= bedrms[1])]
+#                 ['PID'])
+#     return dict(name=foo)
+############ TRYING TO MAKE IT CLIENTSIDE - NOT WORKING!!!
+# app.clientside_callback("function(x){return x;}",
+#     # dash.dependencies.Output('PID_list', 'children'),
+#     Output("housing_id", "hideout"),
+#     Input('price', 'value'),
+#     Input('sqft', 'value'),
+#     Input("input_bathrooms", "value"),
+#     Input("input_bedrooms", "value")
+# )
+# def update_output(prices, sqfts, bathrms, bedrms):
+#     foo = list(maps.housing_basic[(maps.housing_basic['SalePrice'] > prices[0]) &
+#                        (maps.housing_basic['SalePrice'] < prices[1]) &
+#                        (maps.housing_basic['GrLivArea'] > sqfts[0]) &
+#                        (maps.housing_basic['GrLivArea'] < sqfts[1]) &
+#                        (maps.housing_basic['FullBath'] == bathrms) &
+#                        (maps.housing_basic['BedroomAbvGr'] == bedrms)]
+#                 ['PID'])
+#     return dict(name=foo)
+
+
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
