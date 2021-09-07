@@ -96,20 +96,51 @@ layout = html.Div([
             )
 ])
 
-@app.callback(
-    Output('selected_house', 'data'),
-    Input('table', 'rows'),
-    State('table', "selected_rows_ids"),
-)
-def update_output(rows,selected_row_indices):
-    #either:
-    selected_rows=[rows[i] for i in selected_row_indices]
-    #or
-    # selected_rows=pd.DataFrame(rows).iloc[i]
-    print(selected_rows)
-    print('test')
 
-    return do_something
+
+@app.callback(
+    dash.dependencies.Output('hidden-div', 'style'),
+    [dash.dependencies.Input('table', 'columns'),
+    dash.dependencies.Input('table', 'selected_rows')])
+def print_value(columns,selected_rows):
+    print("Hi i am triggered")
+    for i in selected_rows:
+        print(i)
+    selected_rows = [columns[i] for i in selected_rows]
+    # selected_rows = pd.DataFrame(rows).iloc[i]
+    print(selected_rows)
+    style = {'display': 'none'}
+    return style
+
+
+#
+# @app.callback(
+#     Output('selected_house', 'data'),
+#     Input('table', 'derived_virtual_row_ids'),
+#     Input('table', 'selected_row_ids') #,
+#     # Input('table', 'active_cell'))
+# )
+# def update_ouptut(row_ids, selected_row_ids):
+#     selected_id_set = set(selected_row_ids or [])
+#     if row_ids is None:
+#         dff = housing_basic
+#         # pandas Series works enough like a list for this to be OK
+#         row_ids = housing_basic['PID']
+#     else:
+#         dff = housing_basic.loc[row_ids]
+#     print(row_ids)
+#     return
+
+#
+# # def update_output(rows,selected_row_indices):
+#     #either:
+#     selected_rows=[rows[i] for i in selected_row_indices]
+#     #or
+#     # selected_rows=pd.DataFrame(rows).iloc[i]
+#     print(selected_rows)
+#     print('test')
+#
+#     return do_something
 
 
 if __name__ == '__main__':

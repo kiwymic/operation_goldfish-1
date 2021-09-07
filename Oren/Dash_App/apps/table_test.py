@@ -13,8 +13,9 @@ import numpy as np
 df = pd.read_csv('./data/ames_housing_price_data_final.csv')
 params = df.columns
 df = df[df['PID'] == 909176150]
+print(df)
 df_pred = df.copy()
-df = df.apply(lambda x: np.round(x, 1) if type(x[0]) == np.float64 else x)
+# df = df.apply(lambda x: np.round(x, 1) if type(x[0]) == np.float64 else x)
 df_current = df.T.reset_index()
 df_current.columns = ['Features', 'Current']
 sale_price = df_current.loc[1, "Current"]

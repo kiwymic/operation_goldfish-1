@@ -392,7 +392,8 @@ layout = html.Div([
         ])
 ]),
         dbc.Row([
-            html.Hr()
+            html.Hr(),
+            html.Div(id="PIDs")
 ]),
         dbc.Row([
                 html.Div(data_frame.layout,
@@ -406,6 +407,7 @@ layout = html.Div([
 # ], fluid=True)
 # ])
 ])
+
 
 
 

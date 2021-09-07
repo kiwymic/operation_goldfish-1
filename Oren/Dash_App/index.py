@@ -98,8 +98,8 @@ print(svrg.score(back_end, y_std));
 
 #-----------------------------
 
-
-
+# 909176150
+# 903227070
 df = pd.read_csv('./data/ames_housing_price_data_final.csv')
 params = df.columns
 df = df[df['PID'] == 909176150]
@@ -378,8 +378,33 @@ def update_output(sqft_value, basement_value, porch_value, bed_value,
     pred=pff_flip(df_pred)
     print(np.round(int(pred),0))
     
-    return df_future.to_dict('records'),np.round(int(pred),0)
+    return df_future.to_dict('records'), "${:,}".format(np.round(int(pred),0))
 
+# @app.callback(Output("PIDs", "children"),
+#               [Input("housing_id", "click_feature")])
+# def house_click(feature):
+#     print(feature['properties']['PID'])
+#     if feature is not None:
+#         return f"You clicked {feature['properties']['PID']}"
+
+
+# @app.callback(Output("selected_house", "data"),
+#               Output("PIDs", "children"),
+#               Input("housing_id", "click_feature"))
+# def house_click(feature):
+#     # print(feature['properties']['PID'])
+#     if feature is not None:
+#         return {"PID":feature['properties']['PID']}, f"You clicked {feature['properties']['PID']}"
+#
+#
+# @app.callback(
+#               State("selected_house", "data"),
+# )
+# def house_click(data):
+    df = df[df['PID'] == data]
+    # # print(feature['properties']['PID'])
+    # if feature is not None:
+    #     return {"PID":feature['properties']['PID']}, f"You clicked {feature['properties']['PID']}"
 
 
 
