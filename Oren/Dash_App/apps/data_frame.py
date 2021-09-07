@@ -33,7 +33,8 @@ external_stylesheets = ["./assets/my_custom_table_styling.css"]
 # app = Dash(__name__)
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI],
                 meta_tags=[{'name': 'viewport',
-                            'content': 'width=device-width, initial-scale=1.0'}]
+                            # 'content': 'width=device-width, initial-scale=1.0'
+                           }]
                 )
 
 
@@ -89,9 +90,27 @@ layout = html.Div([
                 style_data_conditional=[],
                 sort_action= 'native',
                 filter_action = 'native',
-                style_table={'overflowX': 'auto'}
+                style_table={'overflowX': 'scroll'},
+                fill_width=True,
+                # style={'width':500}
             )
 ])
+
+@app.callback(
+    Output('selected_house', 'data'),
+    Input('table', 'rows'),
+    State('table', "selected_rows_ids"),
+)
+def update_output(rows,selected_row_indices):
+    #either:
+    selected_rows=[rows[i] for i in selected_row_indices]
+    #or
+    # selected_rows=pd.DataFrame(rows).iloc[i]
+    print(selected_rows)
+    print('test')
+
+    return do_something
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)

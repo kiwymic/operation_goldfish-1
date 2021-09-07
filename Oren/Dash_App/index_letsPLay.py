@@ -315,7 +315,7 @@ def update_output(sqft_value, basement_value, porch_value, bed_value,
     Input('computed-table', 'rows'),
     State('computed-table', "selected_rows_ids"),
 )
-def f(rows,selected_row_indices):
+def (rows,selected_row_indices):
     #either:
     selected_rows=[rows[i] for i in selected_row_indices]
     #or

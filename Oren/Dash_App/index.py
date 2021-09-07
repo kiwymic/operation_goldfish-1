@@ -6,9 +6,8 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
-from dash_extensions.javascript import assign
+from dash_extensions.javascript import assign, arrow_function
 import dash
-from dash_extensions.javascript import arrow_function
 import dash_bootstrap_components as dbc
 import dash_table
 from dash_table import DataTable, FormatTemplate
@@ -309,6 +308,11 @@ def update_output(sqft_value, basement_value, porch_value, bed_value,
     df_pred.loc[0, 'KitchenQual'] = kitchen_value
     df_pred.loc[0, "ExterQual"] = exterior_value
     return df_future.to_dict('records')
+
+
+
+
+
 #
 # @app.callback(
 #     Output('selected_house', 'data'),

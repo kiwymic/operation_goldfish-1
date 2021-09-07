@@ -394,16 +394,10 @@ layout = html.Div([
         dbc.Row([
             html.Hr()
 ]),
-
         dbc.Row([
-html.Div(data_frame.layout)
-
-
-#             dash_table.DataTable(
-#                 id='table',
-#                 columns=[{"name": i, "id": i} for i in housing_basic.columns],
-#                 data=housing_basic.to_dict('records'), style_as_list_view=True
-# )
+                html.Div(data_frame.layout,
+                         style={'width':1500}
+                         )
         ])
     ])
 
