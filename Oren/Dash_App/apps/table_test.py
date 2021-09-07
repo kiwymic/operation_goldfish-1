@@ -252,7 +252,7 @@ layout = html.Div([
 
             dbc.Col(children=[html.H3("Future House",
                                       className='text-center text-primary, mb-4'),
-                                html.H3("${:,}".format(sale_price), ########## Change
+                                html.H3("${:,}".format(sale_price), id='future_price', ########## Change
                                       className='text-center text-primary, mb-4'),
                 dash_table.DataTable(
                     id='computed-table',
