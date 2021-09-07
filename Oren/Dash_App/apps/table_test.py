@@ -8,17 +8,21 @@ from collections import OrderedDict
 # import dash_design_kit as ddk
 import dash_daq as daq
 import dash_bootstrap_components as dbc
+import numpy as np
 
 df = pd.read_csv('./data/ames_housing_price_data_final.csv')
 params = df.columns
 df = df[df['PID'] == 909176150]
 df_pred = df.copy()
+df = df.apply(lambda x: np.round(x, 1) if type(x[0]) == np.float64 else x)
 df_current = df.T.reset_index()
 df_current.columns = ['Features', 'Current']
-sale_price = df_current.loc[1, "Current"]#.values[0]
+sale_price = df_current.loc[1, "Current"]
 address = df_current.loc[2, "Current"]
 droprows = [0, 1, 2, 12, 13, 14, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
 df_current = df_current.drop(droprows, axis =0)
+
+
 df_future = df_current.copy()
 df_future.columns = ['Features', 'CompEdit']
 
@@ -229,6 +233,8 @@ layout = html.Div([
                     labelPosition="top"
                 ),
 ####### Dropdown for masonry veneer
+                html.P('Mason Veneer Type',
+                       className='text-center text-primary, mb-1, medium'),
                 dcc.Dropdown(
                         id='future-veneer',
                         options=[

@@ -310,25 +310,24 @@ def update_output(sqft_value, basement_value, porch_value, bed_value,
     df_pred.loc[0, "ExterQual"] = exterior_value
     return df_future.to_dict('records')
 #
-# @app.callback(
-#     Output('selected_house', 'data'),
-#     Input('table', "selected_rows"),
-#     Input('price', 'value'),
-#     Input('sqft', 'value'),
-#     Input("input_bathrooms", "value"),
-#     Input("input_bedrooms", "value")
-# )
+@app.callback(
+    Output('selected_house', 'data'),
+    Input('computed-table', 'rows'),
+    State('computed-table', "selected_rows_ids"),
+)
+def f(rows,selected_row_indices):
+    #either:
+    selected_rows=[rows[i] for i in selected_row_indices]
+    #or
+    # selected_rows=pd.DataFrame(rows).iloc[i]
+    print(selected_rows)
+    print('test')
+
+    return do_something
+#
 # def update_table(selected_rows):
-#     food = list(housing_basic[(housing_basic['SalePrice'] > prices[0]) &
-#                              (housing_basic['SalePrice'] < prices[1]) &
-#                              (housing_basic['GrLivArea'] > sqfts[0]) &
-#                              (housing_basic['GrLivArea'] < sqfts[1]) &
-#                              (housing_basic['FullBath'] >= bathrms[0]) &
-#                              (housing_basic['FullBath'] <= bathrms[1]) &
-#                              (housing_basic['BedroomAbvGr'] >= bedrms[0]) &
-#                              (housing_basic['BedroomAbvGr'] <= bedrms[1])]
-#                ['PID']);
-#     print(food[selected_rows])
+#     print(selected_rows)
+#     print('test')
 #     return(selected_rows)
 
 # def update_output(prices, sqfts, bathrms, bedrms):
