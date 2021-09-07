@@ -30,13 +30,14 @@ import geobuf
 
 from app import app
 from app import server
-from apps import maps, data_frame, app1, filters, table_test, ml_test
+from apps import maps, data_frame, filters, table_test, ml_test
 # from data import loading_stuff
 
 
 df = pd.read_csv('./data/ames_housing_price_data_final.csv')
 params = df.columns
 df = df[df['PID'] == 909176150]
+df_pred = df.copy().drop(['PID', 'Address', 'price_score'], axis =1)
 df_current = df.T.reset_index()
 df_current.columns = ['Features', 'Current']
 sale_price = df_current.loc[1, "Current"]#.values[0]
@@ -49,7 +50,7 @@ df_future.columns = ['Features', 'CompEdit']
 
 
 
-housing_basic = pd.read_csv('./data/basic_housing.csv')
+housing_basic = pd.read_csv('./data/ames_housing_price_data_final.csv')
 
 dropdown = dbc.DropdownMenu(
     children=[
@@ -114,7 +115,8 @@ app.layout = html.Div([
     html.Div(id='page-content'),
     # html.Div(data_frame.layout)
 
-    dcc.Store(id = 'data_pid', storage_type = 'session')
+    dcc.Store(id = 'data_pid', storage_type = 'session'),
+    dcc.Store(id='selected_house', storage_type='session')
 ])
 
 # @app.callback(Output('table', 'style_data_conditional'),
@@ -241,7 +243,6 @@ def update_output(prices, sqfts, bathrms, bedrms):
                         (housing_basic['BedroomAbvGr'] >= bedrms[0]) &
                         (housing_basic['BedroomAbvGr'] <= bedrms[1])]
                 ['PID']);
-    print(foo);
     return {"PID": foo};
 
 
@@ -256,7 +257,7 @@ def update_output(prices, sqfts, bathrms, bedrms):
     Input('future_bath_half', 'value'),
     Input('future_fireplaces', 'value'),
     Input('future_garage', 'value'),
-    Input('pool_switch', 'value'),
+    Input('pool_switch', 'on'),
     Input('future-veneer', 'value'),
     Input('future_overall_q', 'value'),
     Input('future_overall_cond', 'value'),
@@ -267,10 +268,10 @@ def update_output(sqft_value, basement_value, porch_value, bed_value,
                    bath_full_value, bath_half_value, fire_value, garage_value,
                    pool_value, veneer_value, overall_value, cond_value,
                   kitchen_value, exterior_value):
+    basement_footage = df_future.at[17, 'CompEdit'] + df_future.at[6, 'CompEdit']
     df_future.at[3, 'CompEdit'] = sqft_value
-    # df_real.at[0, GrLivArea] = sqft_value
     df_future.at[17, 'CompEdit'] = basement_value
-    # df_future.at[6, 'CompEdit'] = basement_value - (df_current[17, 'CompEdit'] + df_current[6, 'CompEdit'])
+    df_future.at[6, 'CompEdit'] = basement_footage - basement_value
     df_future.at[16, 'CompEdit'] = porch_value
     df_future.at[20, 'CompEdit'] = bed_value
     df_future.at[10, 'CompEdit'] = bath_full_value
@@ -287,9 +288,47 @@ def update_output(sqft_value, basement_value, porch_value, bed_value,
     df_future.at[23, 'CompEdit'] = kitchen_value
     df_future.at[21, 'CompEdit'] = exterior_value
 
+#### For prediction dataframe
+    df_pred.loc[0, 'GrLivArea'] = sqft_value
+    df_pred.loc[0, 'BSMT_HighQual'] += basement_value
+    df_pred.loc[0, 'BSMT_LowQual'] -= basement_value
+    df_pred.loc[0, 'PorchSF'] = porch_value
+    df_pred.loc[0, 'BedroomAbvGr'] = bed_value
+    df_pred.loc[0, 'FullBath'] = bath_full_value
+    df_pred.loc[0, 'HalfBath'] = bath_half_value
+    df_pred.loc[0, 'Fireplaces'] = fire_value
+    df_pred.loc[0, 'GarageCars'] = garage_value
+    if pool_value == True:
+        df_pred.loc[0, 'Pool'] = 1
+    if pool_value == False:
+        df_pred.loc[0, 'Pool'] = 0
+    df_pred.loc[0, 'MasVnrType'] = veneer_value
+    df_pred.loc[0, 'OverallQual'] = overall_value
+    df_pred.loc[0, 'OverallCond'] = cond_value
+    df_pred.loc[0, 'KitchenQual'] = kitchen_value
+    df_pred.loc[0, "ExterQual"] = exterior_value
     return df_future.to_dict('records')
-
-
+#
+# @app.callback(
+#     Output('selected_house', 'data'),
+#     Input('table', "selected_rows"),
+#     Input('price', 'value'),
+#     Input('sqft', 'value'),
+#     Input("input_bathrooms", "value"),
+#     Input("input_bedrooms", "value")
+# )
+# def update_table(selected_rows):
+#     food = list(housing_basic[(housing_basic['SalePrice'] > prices[0]) &
+#                              (housing_basic['SalePrice'] < prices[1]) &
+#                              (housing_basic['GrLivArea'] > sqfts[0]) &
+#                              (housing_basic['GrLivArea'] < sqfts[1]) &
+#                              (housing_basic['FullBath'] >= bathrms[0]) &
+#                              (housing_basic['FullBath'] <= bathrms[1]) &
+#                              (housing_basic['BedroomAbvGr'] >= bedrms[0]) &
+#                              (housing_basic['BedroomAbvGr'] <= bedrms[1])]
+#                ['PID']);
+#     print(food[selected_rows])
+#     return(selected_rows)
 
 # def update_output(prices, sqfts, bathrms, bedrms):
 #     foo = list(maps.housing_basic[(maps.housing_basic['SalePrice'] > prices[0]) &

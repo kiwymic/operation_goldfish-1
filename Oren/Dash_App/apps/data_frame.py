@@ -8,6 +8,7 @@ import dash_leaflet as dl
 import dash_leaflet.express as dlx
 from dash_extensions.javascript import assign
 import dash
+import dash_table
 from dash_extensions.javascript import arrow_function
 import dash_bootstrap_components as dbc
 from dash_table import DataTable, FormatTemplate
@@ -40,10 +41,10 @@ housing_basic = pd.read_csv('./data/ames_housing_price_data_final.csv')
 money = FormatTemplate.money(0)
 
 layout = html.Div([
-    dbc.Container([
-            DataTable(
+            dash_table.DataTable(
                 id='table',
                 columns=[
+                    {'name': ['Address'], 'id': 'Address'},
                     dict(id='SalePrice', name='Sale Price', type='numeric', format=money),
                     {"name": ["Neighborhood"], "id": "Neighborhood"},
                     dict(id='LotArea', name='Lot Area', type='numeric'),
@@ -59,20 +60,22 @@ layout = html.Div([
                 page_size=10,
                 fixed_rows={'headers': True},
                 style_cell_conditional = [
+                    {'if': {'column_id': 'Address'},
+                     'width': '12.5%'},
                     {'if': {'column_id': 'SalePrice'},
-                     'width': '15%'},
+                     'width': '12.5%'},
                     {'if': {'column_id': 'Neighborhood'},
-                     'width': '15%'},
+                     'width': '12.5%'},
                     {'if': {'column_id': 'LotArea'},
-                     'width': '15%'},
+                     'width': '12.5%'},
                     {'if': {'column_id': 'GrLivArea'},
-                     'width': '15%'},
+                     'width': '12.5%'},
                     {'if': {'column_id': 'BedroomAbvGr'},
-                     'width': '15%'},
+                     'width': '12.5%'},
                     {'if': {'column_id': 'FullBath'},
-                     'width': '15%'},
+                     'width': '12.5%'},
                     {'if': {'column_id': 'OverallQual'},
-                     'width': '15%'}
+                     'width': '12.5%'}
                 ],
                 # style_cell={
                 #     'width': 95, #'{}%'.format(len(housing_basic.columns)),
@@ -80,17 +83,15 @@ layout = html.Div([
                 #     'overflow': 'hidden',
                 #     'maxWidth': 95
                 # },
-                row_selectable='multi',
+                row_selectable='single',
                 cell_selectable= False,
+                selected_rows = [],
                 style_data_conditional=[],
                 sort_action= 'native',
                 filter_action = 'native',
                 style_table={'overflowX': 'auto'}
             )
 ])
-])
-
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)

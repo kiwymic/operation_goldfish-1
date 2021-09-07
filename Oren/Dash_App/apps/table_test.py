@@ -12,6 +12,7 @@ import dash_bootstrap_components as dbc
 df = pd.read_csv('./data/ames_housing_price_data_final.csv')
 params = df.columns
 df = df[df['PID'] == 909176150]
+df_pred = df.copy()
 df_current = df.T.reset_index()
 df_current.columns = ['Features', 'Current']
 sale_price = df_current.loc[1, "Current"]#.values[0]
@@ -20,8 +21,6 @@ droprows = [0, 1, 2, 12, 13, 14, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35,
 df_current = df_current.drop(droprows, axis =0)
 df_future = df_current.copy()
 df_future.columns = ['Features', 'CompEdit']
-print(df_current)
-
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI],
                 meta_tags=[{'name': 'viewport',
@@ -82,8 +81,9 @@ layout = html.Div([
                 dcc.Slider(
                     id='future_basement',
                     min=0,
+                    # max= 2500,
                     max= df_current.at[17, 'Current'] + df_current.at[6, 'Current'] ,
-                    step=10,
+                    step=1,
                     marks={
                         0: '0',
                         # 100: '100',
@@ -223,7 +223,7 @@ layout = html.Div([
 ##### Pool - boolean
                 daq.BooleanSwitch(
                     id="pool_switch",
-                    # on=False,
+                    on=0,
                     color="#9B51E0",
                     label="Pool",
                     labelPosition="top"
