@@ -1,0 +1,8 @@
+
+tr:hover {
+  background-color: rgb(41, 56, 55) !important;
+}
+
+.dash-spreadsheet .row {
+  flex-wrap: nowrap;
+}

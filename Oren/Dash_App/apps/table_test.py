@@ -39,7 +39,7 @@ layout = html.Div([
             dbc.Col(children=[html.H3("Current House",
                                       className='text-center text-primary, mb-4'),
                                 html.H3("${:,}".format(sale_price),
-                                      className='text-center text-primary, mb-4'),
+                                      className='text-center text-primary, mb-4', id = 'current_price'),
                               dash_table.DataTable(
                                   id='current-table',
                                   columns=[
@@ -61,8 +61,10 @@ layout = html.Div([
             dbc.Col(children=[
                             html.H3("Home Address",
                                       className='text-center text-primary, mb-4'),
-                                html.H3(address,
-                                      className='text-center text-primary, mb-4'),
+                            html.H3("Here is your dream home...", id = "flip_pid",
+                                    className='text-center text-primary'),
+                                # html.H3(address,
+                                #       className='text-center text-primary, mb-4'),
 #### Square Footage slider
                 html.P('General Living Area Square Footage',
                        className='text-center text-primary, mb-1, medium'),
