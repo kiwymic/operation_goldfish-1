@@ -1,6 +1,8 @@
 from dictionaries import *;
 import pandas as pd;
 import numpy as np;
+from sklearn.base import BaseEstimator, TransformerMixin, RegressorMixin, clone
+from catboost import CatBoostRegressor
 
 # Utility functions which sends from front end to back end
 def front_to_back(fe, method, x_scaler, refit=False):
@@ -83,3 +85,25 @@ def predict_from_front(fe, method, instance, x_scaler, y_scaler):
     else: # The method is log scaled then standardized.
         return 10 ** (y_scaler.inverse_transform(instance.predict(front_to_back(fe, method, x_scaler))));
     return;
+
+
+### The Encapsulation class
+# from sklearn.base import BaseEstimator, TransformerMixin, RegressorMixin, clone
+class EncapsulatedModel(BaseEstimator, RegressorMixin, TransformerMixin):
+    def __init__(self, method="cat", instance = CatBoostRegressor()):
+        self.method = method;
+        self.instance = instance;
+        self.x_scaler = StandardScaler();
+        self.y_scaler = StandardScaler();
+        self.fitted = False;
+        
+    # we define clones of the original models to fit the data in
+    def fit(self, X, y):
+        back_end = front_to_back(X, self.method, self.x_scaler, True);
+        y_proc = predictor_processing(y, self.method, self.y_scaler);
+        self.instance.fit(back_end, y_proc);
+        self.fitted = True;
+        return self;
+    #Now we do the predictions for cloned models and average them
+    def predict(self, X):
+        return predict_from_front(X, self.method, self.instance, self.x_scaler, self.y_scaler);

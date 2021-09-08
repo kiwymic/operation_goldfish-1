@@ -193,16 +193,24 @@ app.layout = html.Div([
 
 @app.callback(
     Output("table", "style_data_conditional"),
+    Output("selected_house", "data"),
+    #Input('table', 'rows'),
+    Input("table", "data"),
     Input("table", "selected_rows"),
 )
-def style_selected_rows(sel_rows):
-    if sel_rows is None:
+def style_selected_rows(tb_data, sel_rows):
+    # if sel_rows is None:
+    if sel_rows == []:
         return dash.no_update
+
+    # value_PID = tb_data[sel_rows]["PID"];
+    val_PID = {"PID": tb_data[sel_rows[0]]["PID"]};
     val = [
         {"if": {"filter_query": "{{id}} ={}".format(i)}, "backgroundColor": "#404040",}
         for i in sel_rows
     ]
-    return val
+    # print(val)
+    return val, val_PID;
 
 
 
@@ -317,8 +325,10 @@ def update_output(prices, sqfts, bathrms, bedrms):
 @app.callback(
     Output('computed-table', 'data'),
     Output('future_price','children'),
+    Output("flip_pid",'children'),
     Input('future_sqft', 'value'),
     Input('future_basement', 'value'),
+    Input('future_basement', 'max'),
     Input('future_porch', 'value'),
     Input('future_bedroom', 'value'),
     Input('future_bath_full', 'value'),
@@ -330,15 +340,20 @@ def update_output(prices, sqfts, bathrms, bedrms):
     Input('future_overall_q', 'value'),
     Input('future_overall_cond', 'value'),
     Input('future_kitchen_q', 'value'),
-    Input('future_exterior_q', 'value')
+    Input('future_exterior_q', 'value'),
+    Input('selected_house', 'data')
 )
-def update_output(sqft_value, basement_value, porch_value, bed_value,
+def update_output(sqft_value, basement_value, basement_max, porch_value, bed_value,
                    bath_full_value, bath_half_value, fire_value, garage_value,
                    pool_value, veneer_value, overall_value, cond_value,
-                  kitchen_value, exterior_value):
+                  kitchen_value, exterior_value,
+                  house_PID):
+    if not house_PID: PID = 909176150;
+    else: PID = house_PID["PID"];
+
     df_future.at[3, 'CompEdit'] = sqft_value
     df_future.at[17, 'CompEdit'] = basement_value
-    df_future.at[6, 'CompEdit'] = basement_footage - basement_value
+    df_future.at[6, 'CompEdit'] = basement_max - basement_value
     df_future.at[16, 'CompEdit'] = porch_value
     df_future.at[20, 'CompEdit'] = bed_value
     df_future.at[10, 'CompEdit'] = bath_full_value
@@ -355,10 +370,20 @@ def update_output(sqft_value, basement_value, porch_value, bed_value,
     df_future.at[23, 'CompEdit'] = kitchen_value
     df_future.at[21, 'CompEdit'] = exterior_value
 
-#### For prediction dataframe
+    # Numbers: 3-11, 15-23, missing; 4(LotArea), 7(house_age_years,),    15(BldgType),
+    needed_row = housing[housing["PID"]==house_PID["PID"]].drop(['PID','Address', 'price_score'], axis =1)
+    df_future.at[4, 'CompEdit'] = needed_row.iloc[0]["LotArea"];
+    df_future.at[7, 'CompEdit'] = round(needed_row.iloc[0]["house_age_years"], 2);
+    df_future.at[15, 'CompEdit'] = needed_row.iloc[0]["BldgType"];
+
+    #### For prediction dataframe
+    for col in df_pred.columns:
+        df_pred.loc[0, col] = needed_row.iloc[0][col]
+
+    # print(df_pred)
     df_pred.loc[0, 'GrLivArea'] = sqft_value
     df_pred.loc[0, 'BSMT_HighQual'] = basement_value
-    df_pred.loc[0, 'BSMT_LowQual'] = basement_footage - basement_value
+    df_pred.loc[0, 'BSMT_LowQual'] = basement_max - basement_value
     df_pred.loc[0, 'PorchSF'] = porch_value
     df_pred.loc[0, 'BedroomAbvGr'] = bed_value
     df_pred.loc[0, 'FullBath'] = bath_full_value
@@ -374,12 +399,88 @@ def update_output(sqft_value, basement_value, porch_value, bed_value,
     df_pred.loc[0, 'OverallCond'] = cond_value
     df_pred.loc[0, 'KitchenQual'] = kitchen_value
     df_pred.loc[0, "ExterQual"] = exterior_value
-    
-    pred=pff_flip(df_pred)
-    print(np.round(int(pred),0))
-    
-    return df_future.to_dict('records'),np.round(int(pred),0)
 
+    pred=pff_flip(df_pred)
+
+    # Getting the Address
+
+    temp = housing;
+    if 'PID' not in temp.columns:
+        temp = temp.reset_index();
+    address = temp[temp["PID"] == PID]["Address"];
+    # temp["Address"] = temp["Address"].apply(lambda x: x[:-17]); # ", Ames, Iowa, USA"
+    return df_future.to_dict('records'),"${:,}".format(np.round(int(pred),0)), address;
+
+
+@app.callback(
+    Output('current-table', 'data'),
+    Output('current_price', 'children'),
+    Output('future_sqft', 'value'),
+    Output('future_basement', 'value'),
+    Output('future_basement', 'max'),
+    Output('future_porch', 'value'),
+    Output('future_overall_q', 'value'),
+    Output('future_overall_cond', 'value'),
+    Output('future_kitchen_q', 'value'),
+    Output('future_exterior_q', 'value'),
+    Output('future_bedroom', 'value'),
+    Output('future_bath_full', 'value'),
+    Output('future_bath_half', 'value'),
+    Output('future_fireplaces', 'value'),
+    Output('future_garage', 'value'),
+    Output('pool_switch', 'value'),
+    Output('future-veneer', 'value'),
+    Input('selected_house', 'data'))
+def update_current_frame(house_PID):
+    PID = 909176150;
+    if house_PID: PID = house_PID["PID"];
+
+    df = housing;
+    if 'PID' not in df:
+        df.reset_index(inplace = True);
+    params = housing.columns
+    df = df[df['PID'] == PID]
+    df_pred = df.copy().drop(['PID', 'Address', 'price_score'], axis =1)
+
+    sale_price = int(df["SalePrice"]);
+    future_sqft = int(df["GrLivArea"]);
+    bsmt_low = int(df["BSMT_LowQual"]);
+    bsmt_high = int(df["BSMT_HighQual"]);
+    future_porch = int(df["PorchSF"]);
+    future_oq = round(float(df["OverallQual"]),2);
+    future_oc = round(float(df["OverallCond"]),2);
+    future_kitchen_q = round(float(df["KitchenQual"]),2);
+    future_exterior_q = round(float(df["ExterQual"]),2);
+    future_bedroom = int(df["BedroomAbvGr"]);
+    future_bath_full = int(df["FullBath"]);
+    future_bath_half = int(df["HalfBath"]);
+    future_fireplaces = int(df["Fireplaces"]);
+    future_garage = int(df["GarageCars"]);
+    future_pool = True if int(df["GarageCars"])==1 else False;
+    future_veneer = str(df["MasVnrType"].iloc[0]);
+
+    # df.set_index("PID", inplace = True);
+    # print(df)
+    # df = df.apply(lambda x: np.round(x[PID], 1) if type(x[PID]) == np.float64 else x[PID])
+
+    df_current = df.T.reset_index()
+    df.set_index("PID", inplace = True);
+    df_current.columns = ['Features', 'Current']
+    df_current["Current"] = df_current.apply(lambda x: np.round(x["Current"], 2) if type(x["Current"]) == float else x["Current"], axis = 1);
+    sale_price = df_current.loc[1, "Current"]#.values[0]
+    address = df_current.loc[2, "Current"]
+    droprows = [0, 1, 2, 12, 13, 14, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
+    df_current = df_current.drop(droprows, axis =0)
+    df_future = df_current.copy()
+    df_future.columns = ['Features', 'CompEdit']
+
+    # print(df_future.apply(lambda x: type(x["CompEdit"]), axis = 1))
+    print(df_future["CompEdit"])
+    #basement_footage = df_future.at[17, 'CompEdit'] + df_future.at[6, 'CompEdit']
+
+    return df_current.to_dict('records'), "${:,}".format(sale_price), future_sqft, bsmt_high, bsmt_high+bsmt_low,\
+    future_porch, future_oq, future_oc, future_kitchen_q, future_exterior_q, future_bedroom,\
+    future_bath_full, future_bath_half, future_fireplaces, future_garage, future_pool, future_veneer;
 
 
 
