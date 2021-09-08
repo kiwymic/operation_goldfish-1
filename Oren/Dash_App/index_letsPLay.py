@@ -311,19 +311,19 @@ def update_output(sqft_value, basement_value, porch_value, bed_value,
     return df_future.to_dict('records')
 #
 @app.callback(
-    Output('selected_house', 'data'),
-    Input('computed-table', 'rows'),
-    State('computed-table', "selected_rows_ids"),
-)
-def (rows,selected_row_indices):
-    #either:
-    selected_rows=[rows[i] for i in selected_row_indices]
-    #or
-    # selected_rows=pd.DataFrame(rows).iloc[i]
+    dash.dependencies.Output('hidden-div', 'style'),
+    [dash.dependencies.Input('table', 'columns'),
+    dash.dependencies.Input('table', 'selected_rows')])
+def print_value(columns,selected_rows):
+    print("Hi i am triggered")
+    # for i in selected_rows:
+    #     print(i)
+    selected_rows = [columns[i] for i in selected_rows]
+    # selected_rows = pd.DataFrame(rows).iloc[i]
     print(selected_rows)
-    print('test')
+    style = {'display': 'none'}
+    return style
 
-    return do_something
 #
 # def update_table(selected_rows):
 #     print(selected_rows)

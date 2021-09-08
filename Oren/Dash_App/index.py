@@ -98,8 +98,8 @@ print(svrg.score(back_end, y_std));
 
 #-----------------------------
 
-
-
+# 909176150
+# 903227070
 df = pd.read_csv('./data/ames_housing_price_data_final.csv')
 params = df.columns
 df = df[df['PID'] == 909176150]
